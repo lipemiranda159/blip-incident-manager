@@ -1,0 +1,1 @@
+# blip-incident-manager
