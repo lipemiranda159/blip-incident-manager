@@ -2,9 +2,9 @@ import StatsCard from "./StatsCard";
 
 export default function Dashboard() {
     return (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 mb-8">
             <StatsCard
-                title="Total de inicidentes"
+                title="Recebidos"
                 iconName="info"
                 value={10}
                 color="blue"
@@ -23,6 +23,13 @@ export default function Dashboard() {
                 value={10}
                 color='red'
                 bgColor="bg-red-100"
+            />
+            <StatsCard
+                title="Pendentes"
+                iconName="info"
+                value={10}
+                color='#9A3412'
+                bgColor="bg-orange-100"
             />
             <StatsCard
                 title="Resolvidos"
