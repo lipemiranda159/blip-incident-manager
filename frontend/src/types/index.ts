@@ -22,9 +22,9 @@ export interface Incident {
 export interface Comment {
   id: string;
   incidentId: string;
-  author: string;
+  author: User;
   content: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface Filter {
