@@ -20,8 +20,6 @@ export default function Header({ onCreateIncident }: HeaderProps) {
             onClick={onCreateIncident}
             iconLeft="plus"
           >
-            {/* <Plus className="h-4 w-4 mr-2" /> */}
-            {/* <BdsIcon theme="outline" size="small" name="plus"/> */}
             Novo incidente
           </BdsButton>
         </div>
