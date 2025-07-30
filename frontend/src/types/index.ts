@@ -34,3 +34,8 @@ export interface Filter {
   dateTo?: string;
   search?: string;
 }
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+}

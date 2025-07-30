@@ -4,9 +4,12 @@ import Dashboard from './components/Dashboard';
 import { IncidentFilters } from './components/IncidentFilters';
 import { useIncidents } from './hooks/useIncidents';
 import { LoadingSpinner } from './components/LoadingSpinner';
+import { useAuth } from './hooks/useAuth';
+import { LoginForm } from './components/LoginForm';
+import { useState } from 'react';
 
 function App() {
-
+  const { user, isAuthenticated, login, logout } = useAuth();
   const {
     incidents,
     loading,
@@ -22,10 +25,23 @@ function App() {
     getIncidentById
   } = useIncidents();
 
-  
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  const handleLogin = async (email: string, password: string) => {
+    setLoginLoading(true);
+    const success = await login(email, password);
+    setLoginLoading(false);
+    return success;
+  };
+
   const notImplementedFunction = function (): void {
     throw new Error('Function not implemented.');
   };
+
+  if (!isAuthenticated || !user) {
+    return <LoginForm onLogin={handleLogin} loading={loginLoading} />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header onCreateIncident={notImplementedFunction}></Header>
