@@ -14,9 +14,10 @@ export interface Incident {
   priority: 'Baixa' | 'Média' | 'Alta' | 'Crítica';
   createdAt: Date;
   updatedAt: Date;
-  assignedTo?: string;
   category: string;
   comments: Comment[];
+  createdBy: User;
+  assignedTo?: User;
 }
 
 export interface Comment {
