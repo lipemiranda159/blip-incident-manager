@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import type { Incident, Filter, User } from '../types';
+import { type Incident, type Filter, type User } from '../types';
 
 const mockUsers: User[] = [
   {
@@ -40,18 +40,20 @@ const generateMockIncidents = (): Incident[] => {
     description: `Descrição detalhada do incidente ${i + 1}. Este é um problema que precisa ser resolvido com urgência e requer atenção especializada.`,
     status: statuses[Math.floor(Math.random() * statuses.length)],
     priority: priorities[Math.floor(Math.random() * priorities.length)],
-    createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+    updatedAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
     createdBy: mockUsers[Math.floor(Math.random() * mockUsers.length)],
     assignedTo: Math.random() > 0.3 ? mockUsers[1] : undefined,
-    comments: []
+    comments: [],
+    category: 'Tecnologia',
+    tags: ['Tecnologia', 'Sistema', 'Incidente']
   }));
 };
 
 export const useIncidents = () => {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState<IncidentFilters>({});
+  const [filters, setFilters] = useState<Filter>({});
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -94,8 +96,8 @@ export const useIncidents = () => {
     const newIncident: Incident = {
       ...data,
       id: `INC-${String(incidents.length + 1).padStart(4, '0')}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
       comments: []
     };
     
@@ -110,7 +112,7 @@ export const useIncidents = () => {
     
     setIncidents(prev => prev.map(incident => 
       incident.id === id 
-        ? { ...incident, ...updates, updatedAt: new Date().toISOString() }
+        ? { ...incident, ...updates, updatedAt: new Date() }
         : incident
     ));
     setLoading(false);
@@ -129,7 +131,7 @@ export const useIncidents = () => {
         ? { 
             ...incident, 
             comments: [...incident.comments, newComment],
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date()
           }
         : incident
     ));
