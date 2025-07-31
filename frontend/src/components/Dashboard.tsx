@@ -1,8 +1,9 @@
+import { BdsGrid } from "blip-ds/dist/blip-ds-react/components";
 import StatsCard from "./StatsCard";
 
 export default function Dashboard() {
     return (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 mb-8">
+        <BdsGrid direction="row" flexWrap="wrap" gap="4" justifyContent="center">
             <StatsCard
                 title="Recebidos"
                 iconName="info"
@@ -18,13 +19,6 @@ export default function Dashboard() {
                 bgColor="bg-yellow-100"
             />
             <StatsCard
-                title="Em adamento"
-                iconName="info"
-                value={10}
-                color='red'
-                bgColor="bg-red-100"
-            />
-            <StatsCard
                 title="Pendentes"
                 iconName="info"
                 value={10}
@@ -38,7 +32,7 @@ export default function Dashboard() {
                 color='green'
                 bgColor="bg-green-100"
             />
-        </div>
+        </BdsGrid>
 
     );
 }
