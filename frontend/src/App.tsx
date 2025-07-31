@@ -1,4 +1,8 @@
-import { BdsButton, BdsCard, BdsCardBody, BdsCardFooter, BdsCardHeader, BdsCardSubtitle, BdsCardTitle, BdsChipTag, BdsGrid, BdsIcon } from 'blip-ds/dist/blip-ds-react/components';
+import {
+  BdsCard, BdsCardBody, BdsCardHeader, BdsCardSubtitle,
+  BdsCardTitle, BdsChipTag, BdsGrid
+} from 'blip-ds/dist/blip-ds-react/components';
+import { useState, useRef, useCallback } from 'react';
 import Header from './components/Headers';
 import Dashboard from './components/Dashboard';
 import { IncidentFilters } from './components/IncidentFilters';
@@ -6,7 +10,6 @@ import { useIncidents } from './hooks/useIncidents';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { useAuth } from './hooks/useAuth';
 import { LoginForm } from './components/LoginForm';
-import { useState } from 'react';
 import type { Incident } from './types';
 import { IncidentModal } from './components/IncidentModal';
 
@@ -17,10 +20,8 @@ function App() {
     loading,
     filters,
     setFilters,
-    currentPage,
-    setCurrentPage,
-    totalPages,
-    totalItems,
+    hasMore,
+    loadMoreIncidents,
     createIncident,
     updateIncident,
     addComment,
@@ -44,7 +45,21 @@ function App() {
     }
   };
 
-  const notImplementedFunction = function (): void {
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastCardRef = useCallback((node: HTMLDivElement) => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        loadMoreIncidents();
+      }
+    });
+
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore, loadMoreIncidents]);
+
+  const notImplementedFunction = () => {
     throw new Error('Function not implemented.');
   };
 
@@ -54,43 +69,51 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header
-        onCreateIncident={notImplementedFunction}
-        user={user}
-        onLogout={logout}>
-      </Header>
+      <Header onCreateIncident={notImplementedFunction} user={user} onLogout={logout} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Dashboard />
         <IncidentFilters
           filters={filters}
           onFiltersChange={setFilters}
-          totalItems={totalItems}
+          totalItems={incidents.length}
         />
 
-        {loading ? (
-          <LoadingSpinner text="Carregando incidentes..." />
-        ) : (
-          <BdsGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {incidents.map(incident => (
-              <BdsCard
+        <BdsGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {incidents.map((incident, index) => {
+            const isLast = index === incidents.length - 1;
+
+            return (
+              <div
                 key={incident.id}
-                clickable
-                className="shadow-sm hover:shadow-md transition-shadow"
-                onClick={() => { handleIncidentClick(incident) }}>
-                <BdsCardHeader>
-                  <BdsCardTitle text={incident.id} />
-                  <BdsChipTag color="default" icon="">
-                    <BdsCardSubtitle text={incident.status} />
-                  </BdsChipTag>
-                </BdsCardHeader>
-                <BdsCardBody>
-                  <p>{incident.description}</p>
-                </BdsCardBody>
-              </BdsCard>
-            ))}
-          </BdsGrid>
+                ref={isLast ? lastCardRef : null}
+              >
+                <BdsCard
+                  clickable
+                  className="shadow-sm hover:shadow-md transition-shadow"
+                  onClick={() => handleIncidentClick(incident)}
+                >
+                  <BdsCardHeader>
+                    <BdsCardTitle text={incident.id} />
+                    <BdsChipTag color="default">
+                      <BdsCardSubtitle text={incident.status} />
+                    </BdsChipTag>
+                  </BdsCardHeader>
+                  <BdsCardBody>
+                    <p>{incident.description}</p>
+                  </BdsCardBody>
+                </BdsCard>
+              </div>
+            );
+          })}
+        </BdsGrid>
+
+        {loading && (
+          <div className="flex justify-center mt-4">
+            <LoadingSpinner text="Carregando mais incidentes..." />
+          </div>
         )}
       </main>
+
       {selectedIncident && (
         <IncidentModal
           incident={selectedIncident}
@@ -101,7 +124,7 @@ function App() {
         />
       )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -50,71 +50,106 @@ const generateMockIncidents = (): Incident[] => {
   }));
 };
 
+
+
 export const useIncidents = () => {
+  const [allIncidents, setAllIncidents] = useState<Incident[]>([]);
   const [incidents, setIncidents] = useState<Incident[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<Filter>({});
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(true);
   const itemsPerPage = 10;
 
+  // Carrega tudo no início
   useEffect(() => {
-    const loadIncidents = async () => {
+    const loadAll = async () => {
       setLoading(true);
-      // Simular delay de carregamento
-      await new Promise(resolve => setTimeout(resolve, 800));
-      const mockIncidents = generateMockIncidents();
-      setIncidents(mockIncidents);
+      await new Promise(res => setTimeout(res, 800));
+      setAllIncidents(generateMockIncidents());
       setLoading(false);
     };
-
-    loadIncidents();
+    loadAll();
   }, []);
 
-  const filteredIncidents = useMemo(() => {
-    return incidents.filter(incident => {
+  // Filtra com base em allIncidents
+  const filteredAll = useMemo(() => {
+    return allIncidents.filter((incident) => {
       if (filters.status && incident.status !== filters.status) return false;
       if (filters.priority && incident.priority !== filters.priority) return false;
-      if (filters.search && !incident.title.toLowerCase().includes(filters.search.toLowerCase()) && 
-          !incident.description.toLowerCase().includes(filters.search.toLowerCase())) return false;
+      if (
+        filters.search &&
+        !incident.title.toLowerCase().includes(filters.search.toLowerCase()) &&
+        !incident.description.toLowerCase().includes(filters.search.toLowerCase())
+      )
+        return false;
       if (filters.dateFrom && new Date(incident.createdAt) < new Date(filters.dateFrom)) return false;
       if (filters.dateTo && new Date(incident.createdAt) > new Date(filters.dateTo)) return false;
       return true;
     });
-  }, [incidents, filters]);
+  }, [allIncidents, filters]);
 
-  const paginatedIncidents = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredIncidents.slice(startIndex, startIndex + itemsPerPage);
-  }, [filteredIncidents, currentPage]);
+  // Reseta incidentes e paginação ao mudar filtro
+  useEffect(() => {
+    setIncidents([]);
+    setPage(1);
+    setHasMore(true);
+  }, [filters]);
 
-  const totalPages = Math.ceil(filteredIncidents.length / itemsPerPage);
+  // Paginação real baseada no array filtrado
+  useEffect(() => {
+    let cancelled = false;
+    const loadMore = async () => {
+      setLoading(true);
+      await new Promise((res) => setTimeout(res, 500));
+      const start = (page - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const newItems = filteredAll.slice(start, end);
+
+      if (!cancelled) {
+        setIncidents((prev) => [...prev, ...newItems]);
+        setHasMore(end < filteredAll.length);
+        setLoading(false);
+      }
+    };
+
+    loadMore();
+    return () => {
+      cancelled = true;
+    };
+  }, [page, filteredAll]);
+
+  const loadMoreIncidents = () => {
+    if (!loading && hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  };
 
   const createIncident = async (data: Omit<Incident, 'id' | 'createdAt' | 'updatedAt' | 'comments'>) => {
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    await new Promise((res) => setTimeout(res, 500));
     const newIncident: Incident = {
       ...data,
-      id: `INC-${String(incidents.length + 1).padStart(4, '0')}`,
+      id: `INC-${String(allIncidents.length + 1).padStart(4, '0')}`,
       createdAt: new Date(),
       updatedAt: new Date(),
       comments: []
     };
-    
-    setIncidents(prev => [newIncident, ...prev]);
+    setAllIncidents((prev) => [newIncident, ...prev]);
     setLoading(false);
     return newIncident;
   };
 
   const updateIncident = async (id: string, updates: Partial<Incident>) => {
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    setIncidents(prev => prev.map(incident => 
-      incident.id === id 
-        ? { ...incident, ...updates, updatedAt: new Date() }
-        : incident
-    ));
+    await new Promise(res => setTimeout(res, 500));
+    setAllIncidents(prev =>
+      prev.map(incident =>
+        incident.id === id
+          ? { ...incident, ...updates, updatedAt: new Date() }
+          : incident
+      )
+    );
     setLoading(false);
   };
 
@@ -126,34 +161,33 @@ export const useIncidents = () => {
       author
     };
 
-    setIncidents(prev => prev.map(incident => 
-      incident.id === incidentId 
-        ? { 
-            ...incident, 
-            comments: [...incident.comments, newComment],
-            updatedAt: new Date()
-          }
-        : incident
-    ));
+    setAllIncidents(prev =>
+      prev.map(incident =>
+        incident.id === incidentId
+          ? {
+              ...incident,
+              comments: [...incident.comments, newComment],
+              updatedAt: new Date()
+            }
+          : incident
+      )
+    );
   };
 
   const getIncidentById = (id: string) => {
-    return incidents.find(incident => incident.id === id);
+    return allIncidents.find((i) => i.id === id) ?? null;
   };
 
   return {
-    incidents: paginatedIncidents,
-    allIncidents: filteredIncidents,
+    incidents,
     loading,
     filters,
     setFilters,
-    currentPage,
-    setCurrentPage,
-    totalPages,
-    totalItems: filteredIncidents.length,
     createIncident,
     updateIncident,
     addComment,
-    getIncidentById
+    getIncidentById,
+    hasMore,
+    loadMoreIncidents
   };
 };
