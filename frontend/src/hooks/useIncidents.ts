@@ -44,7 +44,26 @@ const generateMockIncidents = (): Incident[] => {
     updatedAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
     createdBy: mockUsers[Math.floor(Math.random() * mockUsers.length)],
     assignedTo: Math.random() > 0.3 ? mockUsers[1] : undefined,
-    comments: [],
+    comments: [
+      {
+        id: `comment-${Date.now()}`,
+        content: 'Descrição detalhada do incidente 1. Este é um problema que precisa ser resolvido com urgência e requer atenção especializada.',
+        createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+        author: mockUsers[Math.floor(Math.random() * mockUsers.length)]
+      },
+      {
+        id: `comment-${Date.now()}`,
+        content: 'Descrição detalhada do incidente 1. Este é um problema que precisa ser resolvido com urgência e requer atenção especializada.',
+        createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+        author: mockUsers[Math.floor(Math.random() * mockUsers.length)]
+      },
+      {
+        id: `comment-${Date.now()}`,
+        content: 'Descrição detalhada do incidente 1. Este é um problema que precisa ser resolvido com urgência e requer atenção especializada.',
+        createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+        author: mockUsers[Math.floor(Math.random() * mockUsers.length)]
+      }
+    ],
     category: 'Tecnologia',
     tags: ['Tecnologia', 'Sistema', 'Incidente']
   }));
