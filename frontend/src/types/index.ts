@@ -22,7 +22,6 @@ export interface Incident {
 
 export interface Comment {
   id: string;
-  incidentId: string;
   author: User;
   content: string;
   createdAt: string;
