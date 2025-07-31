@@ -7,6 +7,8 @@ import { LoadingSpinner } from './components/LoadingSpinner';
 import { useAuth } from './hooks/useAuth';
 import { LoginForm } from './components/LoginForm';
 import { useState } from 'react';
+import type { Incident } from './types';
+import { IncidentModal } from './components/IncidentModal';
 
 function App() {
   const { user, isAuthenticated, login, logout } = useAuth();
@@ -25,6 +27,7 @@ function App() {
     getIncidentById
   } = useIncidents();
 
+  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
 
   const handleLogin = async (email: string, password: string) => {
@@ -32,6 +35,13 @@ function App() {
     const success = await login(email, password);
     setLoginLoading(false);
     return success;
+  };
+
+  const handleIncidentClick = (incident: Incident) => {
+    const currentIncident = getIncidentById(incident.id);
+    if (currentIncident) {
+      setSelectedIncident(currentIncident);
+    }
   };
 
   const notImplementedFunction = function (): void {
@@ -44,7 +54,11 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header onCreateIncident={notImplementedFunction}></Header>
+      <Header
+        onCreateIncident={notImplementedFunction}
+        user={user}
+        onLogout={logout}>
+      </Header>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Dashboard />
         <IncidentFilters
@@ -58,7 +72,11 @@ function App() {
         ) : (
           <BdsGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {incidents.map(incident => (
-              <BdsCard key={incident.id} clickable className="shadow-sm hover:shadow-md transition-shadow">
+              <BdsCard
+                key={incident.id}
+                clickable
+                className="shadow-sm hover:shadow-md transition-shadow"
+                onClick={() => { handleIncidentClick(incident) }}>
                 <BdsCardHeader>
                   <BdsCardTitle text={incident.id} />
                   <BdsChipTag color="default" icon="">
@@ -73,6 +91,15 @@ function App() {
           </BdsGrid>
         )}
       </main>
+      {selectedIncident && (
+        <IncidentModal
+          incident={selectedIncident}
+          currentUser={user}
+          onClose={() => setSelectedIncident(null)}
+          onStatusUpdate={notImplementedFunction}
+          onAddComment={addComment}
+        />
+      )}
     </div>
   )
 }
