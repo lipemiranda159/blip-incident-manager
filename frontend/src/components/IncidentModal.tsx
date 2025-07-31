@@ -10,6 +10,10 @@ import {
   BdsGrid,
   BdsDivider,
   BdsChipTag,
+  BdsAccordion,
+  BdsAccordionHeader,
+  BdsAccordionBody,
+  BdsAccordionGroup,
 } from 'blip-ds/dist/blip-ds-react/components'
 import { useState } from 'react'
 import type { Incident, User as UserType } from '../types'
@@ -42,8 +46,6 @@ export const IncidentModal = ({
       minute: '2-digit'
     })
 
-  const canUpdateStatus = currentUser.type === 'atendente'
-
   const handleStatusChange = (e: CustomEvent) => {
     onStatusUpdate(incident.id, e.detail.value as Incident['status'])
   }
@@ -65,14 +67,17 @@ export const IncidentModal = ({
       <BdsGrid padding='1' direction='column' gap='4'>
         <BdsGrid direction="column" gap="2">
           <BdsGrid direction='row'>
-            <BdsGrid direction="column">
+            <BdsGrid direction="column" md='8'>
               <BdsTypo variant="fs-14" bold="extra-bold">
                 {incident.id} - {incident.title}
               </BdsTypo>
             </BdsGrid>
+            <BdsTypo>
+              Prioridade:
+            </BdsTypo>
             <BdsChipTag color="default" icon="">
-                {incident.priority}
-              </BdsChipTag>
+              {incident.priority}
+            </BdsChipTag>
           </BdsGrid>
 
           <BdsGrid direction="row" gap="2">
@@ -94,45 +99,55 @@ export const IncidentModal = ({
 
         <BdsDivider />
 
-        <BdsGrid direction="column" gap="1">
-          <BdsTypo variant="fs-14" bold="extra-bold">
-            Descrição
-          </BdsTypo>
-          <BdsTypo variant="fs-14" bold="regular">
-            {incident.description}
-          </BdsTypo>
-        </BdsGrid>
+        <BdsGrid direction='row'>
+          <BdsGrid direction="column" gap="1" md='8'>
+            <BdsTypo variant="fs-14" bold="extra-bold">
+              Descrição
+            </BdsTypo>
+            <BdsTypo variant="fs-14" bold="regular">
+              {incident.description}
+            </BdsTypo>
+          </BdsGrid>
 
-        <BdsGrid gap='1' direction='column'>
-          <BdsTypo variant="fs-14" bold="extra-bold">
-            Comentários
-          </BdsTypo>
-          {incident.comments.map((comment) => (
-            <BdsPaper key={comment.id} className="mb-2">
-              <BdsTypo>{comment.author.name}</BdsTypo>
-              <BdsTypo>
-                {formatDate(comment.createdAt)}
-              </BdsTypo>
-              <BdsTypo>{comment.content}</BdsTypo>
-            </BdsPaper>
-          ))}
-          <BdsInput
-            placeholder="Adicione um comentário..."
-            value={newComment}
-            disabled={isSubmitting}
-            onBdsChange={(e: CustomEvent) =>
-              setNewComment(e.detail.value || '')
-            }
-            isTextarea
-          ></BdsInput>
-          <BdsButton
-            variant="primary"
-            disabled={!newComment.trim() || isSubmitting}
-            onBdsClick={handleAddComment}
-            icon='send'
-          >
-            Comentar
-          </BdsButton>
+          <BdsGrid gap='1' direction='column' md='4'>
+            <BdsTypo variant="fs-14" bold="extra-bold">
+              Comentários
+            </BdsTypo>
+            <BdsAccordionGroup collapse="multiple">
+              {incident.comments.map((comment) => (
+                <BdsAccordion key={comment.id}>
+                  <BdsAccordionHeader icon='avatar-user' accordion-title={comment.author.name}>
+
+                    <BdsGrid direction='row' gap='1' align-items='center'>
+                      <BdsIcon name='calendar' size='x-small' />
+                      <BdsTypo variant="fs-12" bold="regular">{formatDate(comment.createdAt)}</BdsTypo>
+                    </BdsGrid>
+                  </BdsAccordionHeader>
+                  <BdsAccordionBody>
+                    <BdsTypo variant="fs-16">{comment.content}</BdsTypo>
+                  </BdsAccordionBody>
+                </BdsAccordion>
+              ))}
+            </BdsAccordionGroup>
+            <BdsInput
+              placeholder="Adicione um comentário..."
+              value={newComment}
+              disabled={isSubmitting}
+              onBdsChange={(e: CustomEvent) =>
+                setNewComment(e.detail.value || '')
+              }
+              isTextarea
+            ></BdsInput>
+            <BdsButton
+              variant="primary"
+              disabled={!newComment.trim() || isSubmitting}
+              onBdsClick={handleAddComment}
+              icon='send'
+            >
+              Comentar
+            </BdsButton>
+          </BdsGrid>
+
         </BdsGrid>
 
         <BdsGrid gap='1' direction='column'>
