@@ -9,6 +9,7 @@ import {
   BdsTypo,
   BdsGrid,
   BdsDivider,
+  BdsChipTag,
 } from 'blip-ds/dist/blip-ds-react/components'
 import { useState } from 'react'
 import type { Incident, User as UserType } from '../types'
@@ -63,10 +64,15 @@ export const IncidentModal = ({
       size='dynamic'>
       <BdsGrid padding='1' direction='column' gap='4'>
         <BdsGrid direction="column" gap="2">
-          <BdsGrid direction="column">
-            <BdsTypo variant="fs-14" bold="extra-bold">
-              {incident.id} - {incident.title}
-            </BdsTypo>
+          <BdsGrid direction='row'>
+            <BdsGrid direction="column">
+              <BdsTypo variant="fs-14" bold="extra-bold">
+                {incident.id} - {incident.title}
+              </BdsTypo>
+            </BdsGrid>
+            <BdsChipTag color="default" icon="">
+                {incident.priority}
+              </BdsChipTag>
           </BdsGrid>
 
           <BdsGrid direction="row" gap="2">
@@ -134,20 +140,17 @@ export const IncidentModal = ({
             Detalhes
           </BdsTypo>
 
-          {canUpdateStatus ? (
-            <BdsSelect label="Status" value={incident.status} onBdsChange={handleStatusChange}>
-              <BdsSelectOption value="Aberto" />
-              <BdsSelectOption value="Em andamento" />
-              <BdsSelectOption value="Resolvido" />
-              <BdsSelectOption value="Cancelado" />
+          {(incident.status != 'Resolvido' && incident.status != 'Cancelado') ? (
+            <BdsSelect value={incident.status} onBdsChange={handleStatusChange}>
+              <BdsSelectOption value={1}>Aberto</BdsSelectOption>
+              <BdsSelectOption value={2}>Em andamento</BdsSelectOption>
+              <BdsSelectOption value={3}>Resolvido</BdsSelectOption>
+              <BdsSelectOption value={4}>Cancelado</BdsSelectOption>
             </BdsSelect>
           ) : (
             <BdsTypo>Status: {incident.status}</BdsTypo>
           )}
 
-          <BdsTypo variant="fs-14" bold="regular">
-            Prioridade: {incident.priority}
-          </BdsTypo>
           <BdsTypo variant="fs-14" bold="regular">
             Criado por: {incident.createdBy.name}
           </BdsTypo>
@@ -158,9 +161,6 @@ export const IncidentModal = ({
             </BdsTypo>
           )}
 
-          <BdsTypo variant="fs-14" bold="regular">
-            Criado em: {formatDate(incident.createdAt.toDateString())}
-          </BdsTypo>
           <BdsTypo variant="fs-14" bold="regular">
             Atualizado em: {formatDate(incident.updatedAt.toString())}
           </BdsTypo>
