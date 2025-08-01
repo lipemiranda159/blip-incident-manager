@@ -5,7 +5,6 @@ import {
   BdsSelect,
   BdsSelectOption,
   BdsIcon,
-  BdsPaper,
   BdsTypo,
   BdsGrid,
   BdsDivider,
@@ -15,8 +14,9 @@ import {
   BdsAccordionBody,
   BdsAccordionGroup,
 } from 'blip-ds/dist/blip-ds-react/components'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Incident, User as UserType } from '../types'
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
 
 interface IncidentModalProps {
   incident: Incident
@@ -35,7 +35,9 @@ export const IncidentModal = ({
 }: IncidentModalProps) => {
   const [newComment, setNewComment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [modalOpen, setModalOpen] = useState(true);
+
+
+  useBodyScrollLock(true)
 
   const formatDate = (date: string) =>
     new Date(date).toLocaleString('pt-BR', {
@@ -53,63 +55,103 @@ export const IncidentModal = ({
   const handleAddComment = async () => {
     if (!newComment.trim()) return
     setIsSubmitting(true)
-    await onAddComment(incident.id, newComment.trim(), currentUser)
-    setNewComment('')
-    setIsSubmitting(false)
+    try {
+      await onAddComment(incident.id, newComment.trim(), currentUser)
+      setNewComment('')
+    } catch (error) {
+      console.error('Erro ao adicionar comentário:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
+
+
 
   return (
     <BdsModal
-      open={modalOpen}
+      open={true}
       outzone-close={true}
       close-button={true}
-      size='dynamic'>
-      <BdsGrid padding='1' direction='column' gap='2'>
+      size='dynamic'
+      style={{ maxHeight: '85vh', overflow: 'hidden' }}>
+      <div style={{ maxHeight: '75vh', overflowY: 'auto', padding: '16px' }}>
+        {/* Header Section */}
         <BdsGrid direction="column" gap="1">
-          <BdsGrid direction='row'>
-            <BdsGrid direction="column" md='8'>
-              <BdsTypo variant="fs-14" bold="extra-bold">
-                {incident.id} - {incident.title}
+          <BdsGrid direction="row" justify-content="space-between" align-items="flex-start" flex-wrap="wrap" gap="2">
+            <BdsGrid direction="column">
+              <BdsTypo variant="fs-20" bold="extra-bold" color="primary">
+                {incident.id}
+              </BdsTypo>
+              <BdsTypo variant="fs-16" bold="semi-bold">
+                {incident.title}
               </BdsTypo>
             </BdsGrid>
-            <BdsTypo>
-              Prioridade:
-            </BdsTypo>
-            <BdsChipTag color="default" icon="">
-              {incident.priority}
-            </BdsChipTag>
+            <BdsGrid direction="row" gap="1" align-items="center">
+              <BdsGrid direction="column" align-items="flex-end">
+                <BdsTypo variant="fs-12" color="content-secondary">
+                  Prioridade
+                </BdsTypo>
+                <BdsChipTag color={incident.priority === 'Alta' ? 'danger' : incident.priority === 'Média' ? 'warning' : 'success'}>
+                  {incident.priority}
+                </BdsChipTag>
+              </BdsGrid>
+            </BdsGrid>
           </BdsGrid>
 
-          <BdsGrid direction="row" gap="1">
+          {/* Metadata Section */}
+          <BdsGrid direction="row" gap="3" flex-wrap="wrap">
             <BdsGrid direction="row" gap="1" align-items="center">
-              <BdsTypo variant="fs-16" bold="regular">
-                <BdsIcon name="calendar" size="x-small" class="mr-1" />
-                {formatDate(incident.createdAt.toDateString())}
-              </BdsTypo>
+              <BdsIcon name="calendar" size="small" />
+              <BdsGrid direction="column">
+                <BdsTypo variant="fs-12" color="content-secondary">Criado em</BdsTypo>
+                <BdsTypo variant="fs-14" bold="semi-bold">
+                  {formatDate(incident.createdAt.toDateString())}
+                </BdsTypo>
+              </BdsGrid>
             </BdsGrid>
 
             <BdsGrid direction="row" gap="1" align-items="center">
-              <BdsTypo variant="fs-16" bold="regular">
-                <BdsIcon name="avatar-user" size="x-small" class="mr-1" />
-                {incident.createdBy.name}
-              </BdsTypo>
+              <BdsIcon name="avatar-user" size="small" />
+              <BdsGrid direction="column">
+                <BdsTypo variant="fs-12" color="content-secondary">Criado por</BdsTypo>
+                <BdsTypo variant="fs-14" bold="semi-bold">
+                  {incident.createdBy.name}
+                </BdsTypo>
+              </BdsGrid>
             </BdsGrid>
+
+            {incident.assignedTo && (
+              <BdsGrid direction="row" gap="1" align-items="center">
+                <BdsIcon name="person" size="small" />
+                <BdsGrid direction="column">
+                  <BdsTypo variant="fs-12" color="content-secondary">Atribuído a</BdsTypo>
+                  <BdsTypo variant="fs-14" bold="semi-bold">
+                    {incident.assignedTo.name}
+                  </BdsTypo>
+                </BdsGrid>
+              </BdsGrid>
+            )}
           </BdsGrid>
         </BdsGrid>
 
         <BdsDivider />
 
-        <BdsGrid direction='row'>
-          <BdsGrid direction="column" gap="1" md='8'>
-            <BdsTypo variant="fs-14" bold="extra-bold">
+        {/* Main Content Section */}
+        <BdsGrid direction="row" gap="1">
+          {/* Description Section */}
+          <BdsGrid direction="column" gap="2" md="6">
+            <BdsTypo variant="fs-16" bold="extra-bold" color="primary">
               Descrição
             </BdsTypo>
-            <BdsTypo variant="fs-14" bold="regular">
-              {incident.description}
-            </BdsTypo>
+            <BdsGrid padding="3">
+              <BdsTypo variant="fs-14" line-height="relaxed">
+                {incident.description}
+              </BdsTypo>
+            </BdsGrid>
           </BdsGrid>
 
-          <BdsGrid gap='1' direction='column' md='4'>
+          {/* Comments Section */}
+          <BdsGrid direction="column" gap="2" md="6">
             <BdsTypo variant="fs-14" bold="extra-bold">
               Comentários
             </BdsTypo>
@@ -150,38 +192,53 @@ export const IncidentModal = ({
 
         </BdsGrid>
 
-        <BdsGrid gap='1' direction='column'>
-          <BdsTypo variant="fs-14" bold="extra-bold">
-            Detalhes
+        <BdsDivider />
+
+        {/* Status and Actions Section */}
+        <BdsGrid direction="column" gap="1">
+          <BdsTypo variant="fs-16" bold="extra-bold" color="primary">
+            Status e Ações
           </BdsTypo>
 
-          {(incident.status != 'Resolvido' && incident.status != 'Cancelado') ? (
-            <BdsSelect value={incident.status} onBdsChange={handleStatusChange}>
-              <BdsSelectOption value={1}>Aberto</BdsSelectOption>
-              <BdsSelectOption value={2}>Em andamento</BdsSelectOption>
-              <BdsSelectOption value={3}>Resolvido</BdsSelectOption>
-              <BdsSelectOption value={4}>Cancelado</BdsSelectOption>
-            </BdsSelect>
-          ) : (
-            <BdsTypo>Status: {incident.status}</BdsTypo>
-          )}
+          <BdsGrid direction="row" gap="2" flex-wrap="wrap" align-items="flex-start">
+            {/* Status Control */}
+            <BdsGrid direction="row" gap="2" xxs="12" sm="6">
+              <BdsTypo variant="fs-14" bold="semi-bold">
+                Status:
+              </BdsTypo>
+              {(incident.status !== 'Resolvido' && incident.status !== 'Cancelado') ? (
+                <BdsSelect value={incident.status} onBdsChange={handleStatusChange}>
+                  <BdsSelectOption value="Aberto">Aberto</BdsSelectOption>
+                  <BdsSelectOption value="Em andamento">Em andamento</BdsSelectOption>
+                  <BdsSelectOption value="Pendente">Pendente</BdsSelectOption>
+                  <BdsSelectOption value="Resolvido">Resolvido</BdsSelectOption>
+                  <BdsSelectOption value="Cancelado">Cancelado</BdsSelectOption>
+                </BdsSelect>
+              ) : (
+                <BdsGrid direction="row" align-items="center" gap="1">
+                  <BdsChipTag color={incident.status === 'Resolvido' ? 'success' : 'danger'}>
+                    {incident.status}
+                  </BdsChipTag>
+                </BdsGrid>
+              )}
 
-          <BdsTypo variant="fs-14" bold="regular">
-            Criado por: {incident.createdBy.name}
-          </BdsTypo>
+            </BdsGrid>
 
-          {incident.assignedTo && (
-            <BdsTypo variant="fs-14" bold="regular">
-              Atribuído a: {incident.assignedTo.name}
-            </BdsTypo>
-          )}
-
-          <BdsTypo variant="fs-14" bold="regular">
-            Atualizado em: {formatDate(incident.updatedAt.toString())}
-          </BdsTypo>
-
+            {/* Last Update Info */}
+            <BdsGrid direction="column" gap="2" xxs="12" sm="6">
+              <BdsTypo variant="fs-14" bold="semi-bold">
+                Última Atualização
+              </BdsTypo>
+              <BdsGrid direction="row" gap="1" align-items="center">
+                <BdsIcon name="calendar" size="small" />
+                <BdsTypo variant="fs-14">
+                  {formatDate(incident.updatedAt.toString())}
+                </BdsTypo>
+              </BdsGrid>
+            </BdsGrid>
+          </BdsGrid>
         </BdsGrid>
-      </BdsGrid>
+      </div>
     </BdsModal >
   )
 }

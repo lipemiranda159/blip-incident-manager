@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { BdsGrid } from 'blip-ds/dist/blip-ds-react/components';
 import Header from './components/Headers';
 import Dashboard from './components/Dashboard';
 import { IncidentFilters } from './components/IncidentFilters';
@@ -7,6 +8,7 @@ import { CreateIncidentModal } from './components/CreateIncidentModal';
 import { useIncidents } from './hooks/useIncidents';
 import { useAuth } from './hooks/useAuth';
 import { useIncidentModal } from './hooks/useIncidentModal';
+import './styles/modal-scroll-lock.css';
 import { useIncidentOperations } from './hooks/useIncidentOperations';
 import { LoginForm } from './components/LoginForm';
 import type { Incident } from './types';
@@ -67,14 +69,20 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <BdsGrid direction="column" height="100vh" className="bg-surface-1">
       <Header 
         onCreateIncident={handleCreateIncident} 
         user={user} 
         onLogout={logout} 
       />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <BdsGrid 
+        direction="column" 
+        gap="4" 
+        padding="4" 
+        xxs="12" 
+        lg="10" 
+      >
         <Dashboard />
         
         <IncidentFilters
@@ -90,7 +98,7 @@ function App() {
           onLoadMore={loadMoreIncidents}
           onIncidentClick={handleIncidentClick}
         />
-      </main>
+      </BdsGrid>
 
       {/* Incident Details Modal */}
       {incidentModal.selectedIncident && (
@@ -110,7 +118,7 @@ function App() {
         onSubmit={incidentOperations.handleCreateIncident}
         currentUser={user}
       />
-    </div>
+    </BdsGrid>
   );
 }
 
