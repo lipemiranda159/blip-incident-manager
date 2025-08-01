@@ -14,7 +14,7 @@ import {
   BdsAccordionBody,
   BdsAccordionGroup,
 } from 'blip-ds/dist/blip-ds-react/components'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import type { Incident, User as UserType } from '../types'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
 
@@ -29,7 +29,6 @@ interface IncidentModalProps {
 export const IncidentModal = ({
   incident,
   currentUser,
-  onClose,
   onStatusUpdate,
   onAddComment
 }: IncidentModalProps) => {
