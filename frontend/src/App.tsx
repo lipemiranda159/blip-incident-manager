@@ -6,16 +6,17 @@ import { IncidentFilters } from './components/IncidentFilters';
 import { IncidentGrid } from './components/IncidentGrid';
 import { CreateIncidentModal } from './components/CreateIncidentModal';
 import { useIncidents } from './hooks/useIncidents';
-import { useAuth } from './hooks/useAuth';
 import { useIncidentModal } from './hooks/useIncidentModal';
 import './styles/modal-scroll-lock.css';
 import { useIncidentOperations } from './hooks/useIncidentOperations';
 import { LoginForm } from './components/LoginForm';
 import type { Incident } from './types';
 import { IncidentModal } from './components/IncidentModal';
+import { AuthProvider, useAuthContext } from './contexts/AuthContext';
 
-function App() {
-  const { user, isAuthenticated, login, logout } = useAuth();
+// Component that uses the auth context
+function AppContent() {
+  const { user, isAuthenticated, login, logout } = useAuthContext();
   const {
     incidents,
     loading,
@@ -119,6 +120,15 @@ function App() {
         currentUser={user}
       />
     </BdsGrid>
+  );
+}
+
+// Main App component with AuthProvider
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
