@@ -10,7 +10,7 @@ export interface Incident {
   id: string;
   title: string;
   description: string;
-  status: 'Aberto' | 'Em andamento' | 'Resolvido' | 'Cancelado';
+  status: 'Aberto' | 'Em andamento' | 'Resolvido' | 'Cancelado' | 'Pendente';
   priority: 'Baixa' | 'Média' | 'Alta' | 'Crítica';
   createdAt: Date;
   updatedAt: Date;
