@@ -1,0 +1,6 @@
+@Blip.IncidentManager.API_HostAddress = http://localhost:5219
+
+GET {{Blip.IncidentManager.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
