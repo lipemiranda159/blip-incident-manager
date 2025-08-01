@@ -1,4 +1,5 @@
 ﻿using Blip.IncidenteManager.ServiceConfigurations.Extensions;
+using Blip.IncidentManager.Persistence.Extensions;
 
 namespace Blip.IncidentManager.API.Extensions
 {
@@ -6,8 +7,8 @@ namespace Blip.IncidentManager.API.Extensions
     {
         public static IServiceCollection AddIncidentManagerApiService(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddServiceConfigurations(configuration);
-
+            var config = services.AddServiceConfigurations(configuration);
+            services.AddIncidentDbContext(config);
             return services;
         }
     }

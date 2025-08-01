@@ -2,9 +2,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blip.IncidenteManager.ServiceConfigurations\Blip.IncidenteManager.ServiceConfigurations.csproj" />
     <ProjectReference Include="..\Blip.IncidentManager.Domain\Blip.IncidentManager.Domain.csproj" />
   </ItemGroup>
 
