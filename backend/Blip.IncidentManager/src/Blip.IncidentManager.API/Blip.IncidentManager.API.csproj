@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Blip.IncidentManager.Api.ServiceContracts\Blip.IncidentManager.Api.ServiceContracts.csproj" />
+    <ProjectReference Include="..\Blip.IncidentManager.API.ServiceContract\Blip.IncidentManager.Api.ServiceContracts.csproj" />
     <ProjectReference Include="..\Blip.IncidentManager.Application\Blip.IncidentManager.Application.csproj" />
     <ProjectReference Include="..\Blip.IncidentManager.Infrastructure\Blip.IncidentManager.Infrastructure.csproj" />
   </ItemGroup>

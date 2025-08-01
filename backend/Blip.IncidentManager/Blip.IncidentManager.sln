@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.API", "Blip.IncidentManager.API\Blip.IncidentManager.API.csproj", "{A0359593-66ED-41F4-9E3D-AB142EA9B144}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.API", "src\Blip.IncidentManager.API\Blip.IncidentManager.API.csproj", "{A0359593-66ED-41F4-9E3D-AB142EA9B144}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Application", "Blip.IncidentManager.Application\Blip.IncidentManager.Application.csproj", "{7D65E64B-7F76-410C-A408-E3727F4C5CC2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Application", "src\Blip.IncidentManager.Application\Blip.IncidentManager.Application.csproj", "{7D65E64B-7F76-410C-A408-E3727F4C5CC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Domain", "Blip.IncidentManager.Domain\Blip.IncidentManager.Domain.csproj", "{5A570B09-1E05-4412-9FA7-ED4B1CD9E941}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Domain", "src\Blip.IncidentManager.Domain\Blip.IncidentManager.Domain.csproj", "{5A570B09-1E05-4412-9FA7-ED4B1CD9E941}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Infrastructure", "Blip.IncidentManager.Infrastructure\Blip.IncidentManager.Infrastructure.csproj", "{54242DEC-B0BC-4BF2-BE3D-A1583C5C89B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Infrastructure", "src\Blip.IncidentManager.Infrastructure\Blip.IncidentManager.Infrastructure.csproj", "{54242DEC-B0BC-4BF2-BE3D-A1583C5C89B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Persistence", "Blip.IncidentManager.Persistence\Blip.IncidentManager.Persistence.csproj", "{114F797E-177B-4E4C-BE42-0E345100A133}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Persistence", "src\Blip.IncidentManager.Persistence\Blip.IncidentManager.Persistence.csproj", "{114F797E-177B-4E4C-BE42-0E345100A133}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Tests", "Blip.IncidentManager.Tests\Blip.IncidentManager.Tests.csproj", "{8AFA64E8-B578-47E2-BAC2-AE88390E650F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Api.ServiceContracts", "Blip.IncidentManager.Api.ServiceContracts\Blip.IncidentManager.Api.ServiceContracts.csproj", "{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Tests", "src\Blip.IncidentManager.Tests\Blip.IncidentManager.Tests.csproj", "{8AFA64E8-B578-47E2-BAC2-AE88390E650F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ops", "ops", "{C24C4140-B130-4C7E-8E44-F983846CCC89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Api.ServiceContracts", "src\Blip.IncidentManager.API.ServiceContract\Blip.IncidentManager.Api.ServiceContracts.csproj", "{9AD1D511-9231-4842-AE4C-DF1DCF96E466}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,18 +103,18 @@ Global
 		{8AFA64E8-B578-47E2-BAC2-AE88390E650F}.Release|x64.Build.0 = Release|Any CPU
 		{8AFA64E8-B578-47E2-BAC2-AE88390E650F}.Release|x86.ActiveCfg = Release|Any CPU
 		{8AFA64E8-B578-47E2-BAC2-AE88390E650F}.Release|x86.Build.0 = Release|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Debug|x64.Build.0 = Debug|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Debug|x86.Build.0 = Debug|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Release|Any CPU.Build.0 = Release|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Release|x64.ActiveCfg = Release|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Release|x64.Build.0 = Release|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Release|x86.ActiveCfg = Release|Any CPU
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973}.Release|x86.Build.0 = Release|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Debug|x64.Build.0 = Debug|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Debug|x86.Build.0 = Debug|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Release|x64.ActiveCfg = Release|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Release|x64.Build.0 = Release|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Release|x86.ActiveCfg = Release|Any CPU
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -126,7 +126,7 @@ Global
 		{54242DEC-B0BC-4BF2-BE3D-A1583C5C89B7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{114F797E-177B-4E4C-BE42-0E345100A133} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{8AFA64E8-B578-47E2-BAC2-AE88390E650F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{80CF9641-EEF1-4B4E-91FE-B3F19AFAB973} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{9AD1D511-9231-4842-AE4C-DF1DCF96E466} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4DE7ED62-4F86-40EE-A546-3D1496955203}
