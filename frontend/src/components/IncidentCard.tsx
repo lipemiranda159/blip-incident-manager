@@ -4,7 +4,9 @@ import {
   BdsCardHeader,
   BdsCardSubtitle,
   BdsCardTitle,
-  BdsChipTag
+  BdsChipTag,
+  BdsGrid,
+  BdsTypo
 } from 'blip-ds/dist/blip-ds-react/components';
 import { forwardRef } from 'react';
 import type { Incident } from '../types';
@@ -26,6 +28,8 @@ export const IncidentCard = forwardRef<HTMLDivElement, IncidentCardProps>(
           return 'success';
         case 'Cancelado':
           return 'disabled';
+        case 'Pendente':
+          return 'info';
         default:
           return 'default';
       }
@@ -50,38 +54,44 @@ export const IncidentCard = forwardRef<HTMLDivElement, IncidentCardProps>(
       <div ref={ref}>
         <BdsCard
           clickable
-          className="shadow-sm hover:shadow-md transition-shadow cursor-pointer"
           onClick={() => onClick(incident)}
         >
           <BdsCardHeader>
-            <div className="flex justify-between items-start">
-              <div>
+            <BdsGrid direction="row" justify-content="space-between" align-items="flex-start">
+              <BdsGrid direction="column" gap="1">
                 <BdsCardTitle text={incident.id} />
                 <BdsCardSubtitle text={incident.title} />
-              </div>
-              <div className="flex flex-col gap-1">
+              </BdsGrid>
+              <BdsGrid direction="row" gap="1" justifyContent='flex-end'>
                 <BdsChipTag color={getStatusColor(incident.status)}>
                   {incident.status}
                 </BdsChipTag>
-                <BdsChipTag color={getPriorityColor(incident.priority)} size="sm">
+                <BdsChipTag color={getPriorityColor(incident.priority)}>
                   {incident.priority}
                 </BdsChipTag>
-              </div>
-            </div>
+              </BdsGrid>
+            </BdsGrid>
           </BdsCardHeader>
           <BdsCardBody>
-            <p className="text-sm text-gray-600 line-clamp-2">
-              {incident.description}
-            </p>
-            <div className="mt-2 flex justify-between items-center text-xs text-gray-500">
-              <span>Por: {incident.createdBy.name}</span>
-              <span>{new Date(incident.createdAt).toLocaleDateString('pt-BR')}</span>
-            </div>
-            {incident.assignedTo && (
-              <div className="mt-1 text-xs text-blue-600">
-                Atribuído a: {incident.assignedTo.name}
-              </div>
-            )}
+            <BdsGrid direction="column" gap="2">
+              <BdsTypo variant="fs-14" line-height="plus">
+                {incident.description}
+              </BdsTypo>
+              <BdsGrid direction="row" justify-content="space-between" align-items="center">
+                <BdsTypo variant="fs-12" color="content-secondary">
+                  Por: {incident.createdBy.name}
+                </BdsTypo>
+                <BdsTypo variant="fs-12" color="content-secondary">
+                  {new Date(incident.createdAt).toLocaleDateString('pt-BR')}
+                </BdsTypo>
+                {incident.assignedTo && (
+                  <BdsTypo variant="fs-12" color="primary">
+                    Atribuído a: {incident.assignedTo.name}
+                  </BdsTypo>
+                )}
+              </BdsGrid>
+
+            </BdsGrid>
           </BdsCardBody>
         </BdsCard>
       </div>
