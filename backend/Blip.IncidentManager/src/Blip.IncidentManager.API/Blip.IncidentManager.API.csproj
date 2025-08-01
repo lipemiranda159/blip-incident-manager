@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blip.IncidenteManager.ServiceConfigurations\Blip.IncidenteManager.ServiceConfigurations.csproj" />
     <ProjectReference Include="..\Blip.IncidentManager.Api.ServiceContracts\Blip.IncidentManager.Api.ServiceContracts.csproj" />
     <ProjectReference Include="..\Blip.IncidentManager.API.ServiceContract\Blip.IncidentManager.Api.ServiceContracts.csproj" />
     <ProjectReference Include="..\Blip.IncidentManager.Application\Blip.IncidentManager.Application.csproj" />
