@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -7,10 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="15.0.1" />
+    <PackageReference Include="MediatR" Version="13.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blip.IncidentManager.Api.ServiceContracts\Blip.IncidentManager.Api.ServiceContracts.csproj" />
     <ProjectReference Include="..\Blip.IncidentManager.Application\Blip.IncidentManager.Application.csproj" />
     <ProjectReference Include="..\Blip.IncidentManager.Infrastructure\Blip.IncidentManager.Infrastructure.csproj" />
   </ItemGroup>
