@@ -1,14 +1,13 @@
-import {
-  BdsCard, BdsCardBody, BdsCardHeader, BdsCardSubtitle,
-  BdsCardTitle, BdsChipTag, BdsGrid
-} from 'blip-ds/dist/blip-ds-react/components';
-import { useState, useRef, useCallback } from 'react';
+import { useState } from 'react';
 import Header from './components/Headers';
 import Dashboard from './components/Dashboard';
 import { IncidentFilters } from './components/IncidentFilters';
+import { IncidentGrid } from './components/IncidentGrid';
+import { CreateIncidentModal } from './components/CreateIncidentModal';
 import { useIncidents } from './hooks/useIncidents';
-import { LoadingSpinner } from './components/LoadingSpinner';
 import { useAuth } from './hooks/useAuth';
+import { useIncidentModal } from './hooks/useIncidentModal';
+import { useIncidentOperations } from './hooks/useIncidentOperations';
 import { LoginForm } from './components/LoginForm';
 import type { Incident } from './types';
 import { IncidentModal } from './components/IncidentModal';
@@ -28,8 +27,18 @@ function App() {
     getIncidentById
   } = useIncidents();
 
-  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  // Modal management
+  const incidentModal = useIncidentModal();
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
+
+  // Incident operations with error handling
+  const incidentOperations = useIncidentOperations({
+    createIncident,
+    updateIncident,
+    addComment,
+    getIncidentById
+  });
 
   const handleLogin = async (email: string, password: string) => {
     setLoginLoading(true);
@@ -41,26 +50,16 @@ function App() {
   const handleIncidentClick = (incident: Incident) => {
     const currentIncident = getIncidentById(incident.id);
     if (currentIncident) {
-      setSelectedIncident(currentIncident);
+      incidentModal.openModal(currentIncident);
     }
   };
 
-  const observer = useRef<IntersectionObserver | null>(null);
-  const lastCardRef = useCallback((node: HTMLDivElement) => {
-    if (loading) return;
-    if (observer.current) observer.current.disconnect();
+  const handleCreateIncident = () => {
+    setShowCreateModal(true);
+  };
 
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        loadMoreIncidents();
-      }
-    });
-
-    if (node) observer.current.observe(node);
-  }, [loading, hasMore, loadMoreIncidents]);
-
-  const notImplementedFunction = () => {
-    throw new Error('Function not implemented.');
+  const handleStatusUpdate = async (incidentId: string, status: Incident['status']) => {
+    return await incidentOperations.handleUpdateIncident(incidentId, { status });
   };
 
   if (!isAuthenticated || !user) {
@@ -69,60 +68,48 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header onCreateIncident={notImplementedFunction} user={user} onLogout={logout} />
+      <Header 
+        onCreateIncident={handleCreateIncident} 
+        user={user} 
+        onLogout={logout} 
+      />
+      
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Dashboard />
+        
         <IncidentFilters
           filters={filters}
           onFiltersChange={setFilters}
           totalItems={incidents.length}
         />
 
-        <BdsGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {incidents.map((incident, index) => {
-            const isLast = index === incidents.length - 1;
-
-            return (
-              <div
-                key={incident.id}
-                ref={isLast ? lastCardRef : null}
-              >
-                <BdsCard
-                  clickable
-                  className="shadow-sm hover:shadow-md transition-shadow"
-                  onClick={() => handleIncidentClick(incident)}
-                >
-                  <BdsCardHeader>
-                    <BdsCardTitle text={incident.id} />
-                    <BdsChipTag color="default">
-                      <BdsCardSubtitle text={incident.status} />
-                    </BdsChipTag>
-                  </BdsCardHeader>
-                  <BdsCardBody>
-                    <p>{incident.description}</p>
-                  </BdsCardBody>
-                </BdsCard>
-              </div>
-            );
-          })}
-        </BdsGrid>
-
-        {loading && (
-          <div className="flex justify-center mt-4">
-            <LoadingSpinner text="Carregando mais incidentes..." />
-          </div>
-        )}
+        <IncidentGrid
+          incidents={incidents}
+          loading={loading}
+          hasMore={hasMore}
+          onLoadMore={loadMoreIncidents}
+          onIncidentClick={handleIncidentClick}
+        />
       </main>
 
-      {selectedIncident && (
+      {/* Incident Details Modal */}
+      {incidentModal.selectedIncident && (
         <IncidentModal
-          incident={selectedIncident}
+          incident={incidentModal.selectedIncident}
           currentUser={user}
-          onClose={() => setSelectedIncident(null)}
-          onStatusUpdate={notImplementedFunction}
-          onAddComment={addComment}
+          onClose={incidentModal.closeModal}
+          onStatusUpdate={handleStatusUpdate}
+          onAddComment={incidentOperations.handleAddComment}
         />
       )}
+
+      {/* Create Incident Modal */}
+      <CreateIncidentModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSubmit={incidentOperations.handleCreateIncident}
+        currentUser={user}
+      />
     </div>
   );
 }

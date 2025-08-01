@@ -64,8 +64,8 @@ export const IncidentModal = ({
       outzone-close={true}
       close-button={true}
       size='dynamic'>
-      <BdsGrid padding='1' direction='column' gap='4'>
-        <BdsGrid direction="column" gap="2">
+      <BdsGrid padding='1' direction='column' gap='2'>
+        <BdsGrid direction="column" gap="1">
           <BdsGrid direction='row'>
             <BdsGrid direction="column" md='8'>
               <BdsTypo variant="fs-14" bold="extra-bold">
@@ -80,7 +80,7 @@ export const IncidentModal = ({
             </BdsChipTag>
           </BdsGrid>
 
-          <BdsGrid direction="row" gap="2">
+          <BdsGrid direction="row" gap="1">
             <BdsGrid direction="row" gap="1" align-items="center">
               <BdsTypo variant="fs-16" bold="regular">
                 <BdsIcon name="calendar" size="x-small" class="mr-1" />

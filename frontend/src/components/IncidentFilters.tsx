@@ -116,7 +116,7 @@ export const IncidentFilters: React.FC<IncidentFiltersProps> = ({
               <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
                 Prioridade: {filters.priority}
                 <button onClick={() => updateFilter('priority', '')}>
-                  <X className="w-3 h-3" />
+                  <BdsIcon name='close' className="w-3 h-3" />
                 </button>
               </span>
             )}
