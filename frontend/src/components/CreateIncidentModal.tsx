@@ -1,4 +1,16 @@
 import { useState } from 'react';
+import {
+  BdsModal,
+  BdsGrid,
+  BdsTypo,
+  BdsInput,
+  BdsSelect,
+  BdsSelectOption,
+  BdsButton,
+  BdsAlert,
+  BdsAlertHeader,
+  BdsAlertBody
+} from 'blip-ds/dist/blip-ds-react/components';
 import type { Incident, User } from '../types';
 
 interface CreateIncidentModalProps {
@@ -57,90 +69,104 @@ export const CreateIncidentModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-        <h2 className="text-xl font-semibold mb-4">Criar Novo Incidente</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Título
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
+    <BdsModal
+      open={isOpen}
+      outzone-close={true}
+      close-button={true}
+      size="dynamic"
+    >
+      <BdsGrid direction="column" gap="4" padding="4">
+        <BdsTypo variant="fs-20" bold="bold">
+          Criar Novo Incidente
+        </BdsTypo>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Descrição
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows={3}
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Prioridade
-              </label>
-              <select
-                value={formData.priority}
-                onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as Incident['priority'] }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="Baixa">Baixa</option>
-                <option value="Média">Média</option>
-                <option value="Alta">Alta</option>
-                <option value="Crítica">Crítica</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Categoria
-              </label>
-              <input
-                type="text"
-                value={formData.category}
-                onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <form onSubmit={handleSubmit}>
+          <BdsGrid direction="column" gap="3">
+            <BdsGrid direction="column" gap="1">
+              <BdsTypo variant="fs-14" bold="semi-bold">
+                Título
+              </BdsTypo>
+              <BdsInput
+                value={formData.title}
+                onBdsChange={(e) => setFormData(prev => ({ ...prev, title: e.detail }))}
+                placeholder="Digite o título do incidente"
+                required
               />
-            </div>
-          </div>
+            </BdsGrid>
 
-          {error && (
-            <div className="text-red-600 text-sm">{error}</div>
-          )}
+            <BdsGrid direction="column" gap="1">
+              <BdsTypo variant="fs-14" bold="semi-bold">
+                Descrição
+              </BdsTypo>
+              <BdsInput
+                value={formData.description}
+                onBdsChange={(e) => setFormData(prev => ({ ...prev, description: e.detail }))}
+                placeholder="Descreva o incidente em detalhes"
+                isTextarea
+                required
+              />
+            </BdsGrid>
 
-          <div className="flex justify-end space-x-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
-              disabled={isSubmitting}
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Criando...' : 'Criar Incidente'}
-            </button>
-          </div>
+            <BdsGrid direction="row" gap="3" xxs="12" sm="6">
+              <BdsGrid direction="column" gap="1">
+                <BdsTypo variant="fs-14" bold="semi-bold">
+                  Prioridade
+                </BdsTypo>
+                <BdsSelect
+                  value={formData.priority}
+                  onBdsChange={(e) => setFormData(prev => ({ ...prev, priority: e.detail as unknown as Incident['priority'] }))}
+                >
+                  <BdsSelectOption value="Baixa">Baixa</BdsSelectOption>
+                  <BdsSelectOption value="Média">Média</BdsSelectOption>
+                  <BdsSelectOption value="Alta">Alta</BdsSelectOption>
+                  <BdsSelectOption value="Crítica">Crítica</BdsSelectOption>
+                </BdsSelect>
+              </BdsGrid>
+
+              <BdsGrid direction="column" gap="1">
+                <BdsTypo variant="fs-14" bold="semi-bold">
+                  Categoria
+                </BdsTypo>
+                <BdsInput
+                  value={formData.category}
+                  onBdsChange={(e) => setFormData(prev => ({ ...prev, category: e.detail }))}
+                  placeholder="Categoria do incidente"
+                />
+              </BdsGrid>
+            </BdsGrid>
+
+            {error && (
+
+              <BdsAlert open={true} id="alert">
+                <BdsAlertHeader variant="error" icon="info">
+                  Atenção!
+                </BdsAlertHeader>
+                <BdsAlertBody>
+                  {error}
+                </BdsAlertBody>
+              </BdsAlert>
+
+            )}
+
+            <BdsGrid direction="row" justify-content="flex-end" gap="2" padding-top="3">
+              <BdsButton
+                variant="ghost"
+                onClick={onClose}
+                disabled={isSubmitting}
+              >
+                Cancelar
+              </BdsButton>
+              <BdsButton
+                type="submit"
+                variant="primary"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Criando...' : 'Criar Incidente'}
+              </BdsButton>
+            </BdsGrid>
+          </BdsGrid>
         </form>
-      </div>
-    </div>
+      </BdsGrid>
+    </BdsModal>
   );
 };
