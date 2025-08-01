@@ -1,4 +1,4 @@
-import { BdsGrid } from 'blip-ds/dist/blip-ds-react/components';
+import { BdsGrid, BdsTypo } from 'blip-ds/dist/blip-ds-react/components';
 import { IncidentCard } from './IncidentCard';
 import { LoadingSpinner } from './LoadingSpinner';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
@@ -27,39 +27,57 @@ export const IncidentGrid = ({
 
   if (incidents.length === 0 && !loading) {
     return (
-      <div className="text-center py-12">
-        <div className="text-gray-500 text-lg">
+      <BdsGrid
+        direction="column"
+        align-items="center"
+        justify-content="center"
+        padding="8"
+        gap="2"
+      >
+        <BdsTypo variant="fs-20" color="content-secondary">
           Nenhum incidente encontrado
-        </div>
-        <div className="text-gray-400 text-sm mt-2">
+        </BdsTypo>
+        <BdsTypo variant="fs-14" color="content-tertiary">
           Tente ajustar os filtros para ver mais resultados
-        </div>
-      </div>
+        </BdsTypo>
+      </BdsGrid>
     );
   }
 
   return (
-    <>
-      <BdsGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <BdsGrid direction="column" gap="4">
+      <BdsGrid 
+        direction="row" 
+        gap="2" 
+        flex-wrap="wrap"
+      >
         {incidents.map((incident, index) => {
           const isLast = index === incidents.length - 1;
 
           return (
-            <IncidentCard
-              key={incident.id}
-              ref={isLast ? lastElementRef : null}
-              incident={incident}
-              onClick={onIncidentClick}
-            />
+            <BdsGrid 
+              key={incident.id} 
+              xxs="12" 
+              sm="6" 
+              md="3" 
+              lg="2"
+            >
+              <IncidentCard
+                ref={isLast ? lastElementRef : null}
+                incident={incident}
+                onClick={onIncidentClick}
+              />
+            </BdsGrid>
           );
         })}
       </BdsGrid>
 
       {loading && (
-        <div className="flex justify-center mt-8">
+        <BdsGrid direction="row" justify-content="center" padding="4">
           <LoadingSpinner text="Carregando mais incidentes..." />
-        </div>
+        </BdsGrid>
       )}
-    </>
+    </BdsGrid>
+
   );
 };
