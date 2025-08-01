@@ -1,6 +1,12 @@
-import { BdsIcon } from 'blip-ds/dist/blip-ds-react/components';
+import {
+  BdsIcon,
+  BdsGrid,
+  BdsTypo,
+  BdsInput,
+  BdsButton,
+  BdsAlert
+} from 'blip-ds/dist/blip-ds-react/components';
 import React, { useState } from 'react';
-
 
 interface LoginFormProps {
   onLogin: (email: string, password: string) => Promise<boolean>;
@@ -24,98 +30,147 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, loading = false }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
-        <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
-            <BdsIcon name='info' className="w-8 h-8 text-white" />
+    <BdsGrid 
+      direction="column" 
+      justify-content="center" 
+      align-items="center" 
+      padding="4"
+      style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%)' }}
+    >
+      <BdsGrid 
+        direction="column" 
+        gap="4" 
+        padding="6"
+        style={{ 
+          maxWidth: '400px', 
+          width: '100%', 
+          backgroundColor: 'white', 
+          borderRadius: '12px', 
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)' 
+        }}
+      >
+        {/* Header Section */}
+        <BdsGrid direction="column" align-items="center" gap="2">
+          <div style={{
+            width: '64px',
+            height: '64px',
+            backgroundColor: '#2563eb',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <BdsIcon name='info' size="large" style={{ color: 'white' }} />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Sistema de Incidentes</h1>
-          <p className="text-gray-600 mt-2">Entre com suas credenciais</p>
-        </div>
+          <BdsTypo variant="fs-24" bold="extra-bold" color="primary">
+            Sistema de Incidentes
+          </BdsTypo>
+          <BdsTypo variant="fs-14" color="content-secondary">
+            Entre com suas credenciais
+          </BdsTypo>
+        </BdsGrid>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+        {/* Form Section */}
+        <BdsGrid direction="column" gap="3">
+          <BdsGrid direction="column" gap="1">
+            <BdsTypo variant="fs-14" bold="semi-bold">
               Email
-            </label>
-            <input
-              id="email"
+            </BdsTypo>
+            <BdsInput
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               placeholder="seu@email.com"
-              required
               disabled={loading}
+              onBdsChange={(e: CustomEvent) => setEmail(e.detail.value || '')}
             />
-          </div>
+          </BdsGrid>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+          <BdsGrid direction="column" gap="1">
+            <BdsTypo variant="fs-14" bold="semi-bold">
               Senha
-            </label>
-            <div className="relative">
-              <input
-                id="password"
+            </BdsTypo>
+            <BdsGrid direction="row" align-items="center" style={{ position: 'relative' }}>
+              <BdsInput
                 type={showPassword ? 'text' : 'password'}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors pr-12"
                 placeholder="••••••••"
-                required
                 disabled={loading}
+                onBdsChange={(e: CustomEvent) => setPassword(e.detail.value || '')}
+                style={{ width: '100%' }}
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              <BdsButton
+                variant="ghost"
+                size="short"
+                icon={showPassword ? 'eye-closed' : 'eye-open'}
+                onBdsClick={() => setShowPassword(!showPassword)}
                 disabled={loading}
-              >
-                {showPassword ? <BdsIcon name='eye-closed' className="w-5 h-5" /> : <BdsIcon name='eye-open' className="w-5 h-5" />}
-              </button>
-            </div>
-          </div>
+                style={{ 
+                  position: 'absolute', 
+                  right: '8px', 
+                  zIndex: 1,
+                  minWidth: 'auto',
+                  padding: '4px'
+                }}
+              />
+            </BdsGrid>
+          </BdsGrid>
 
           {error && (
-            <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg">
-              <BdsIcon name='warning' className="w-4 h-4" />
-              {error}
-            </div>
+            <BdsAlert>
+              <BdsGrid direction="row" align-items="center" gap="1">
+                <BdsIcon name="warning" size="small" />
+                <BdsTypo variant="fs-14" color="danger">
+                  {error}
+                </BdsTypo>
+              </BdsGrid>
+            </BdsAlert>
           )}
 
-          <button
-            type="submit"
+          <BdsButton
+            variant="primary"
+            size="medium"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            onBdsClick={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
+            style={{ width: '100%' }}
           >
-            {loading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Entrando...
-              </>
-            ) : (
-              <>
-                Entrar
-              </>
-            )}
-          </button>
-        </form>
+            {loading ? 'Entrando...' : 'Entrar'}
+          </BdsButton>
+        </BdsGrid>
 
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-          <h3 className="font-medium text-blue-900 mb-3">Contas de Teste:</h3>
-          <div className="space-y-2 text-sm">
-            <div>
-              <p className="font-medium text-blue-800">Solicitante:</p>
-              <p className="text-blue-700">joao@empresa.com / 123456</p>
-            </div>
-            <div>
-              <p className="font-medium text-blue-800">Atendente:</p>
-              <p className="text-blue-700">maria@empresa.com / 123456</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        {/* Test Accounts Section */}
+        <BdsGrid 
+          direction="column" 
+          gap="2" 
+          padding="3"
+          style={{ 
+            backgroundColor: '#eff6ff', 
+            borderRadius: '8px',
+            border: '1px solid #dbeafe'
+          }}
+        >
+          <BdsTypo variant="fs-16" bold="semi-bold" color="primary">
+            Contas de Teste:
+          </BdsTypo>
+          <BdsGrid direction="column" gap="2">
+            <BdsGrid direction="column" gap="1">
+              <BdsTypo variant="fs-14" bold="semi-bold">
+                Solicitante:
+              </BdsTypo>
+              <BdsTypo variant="fs-14" color="content-secondary">
+                joao@empresa.com / 123456
+              </BdsTypo>
+            </BdsGrid>
+            <BdsGrid direction="column" gap="1">
+              <BdsTypo variant="fs-14" bold="semi-bold">
+                Atendente:
+              </BdsTypo>
+              <BdsTypo variant="fs-14" color="content-secondary">
+                maria@empresa.com / 123456
+              </BdsTypo>
+            </BdsGrid>
+          </BdsGrid>
+        </BdsGrid>
+      </BdsGrid>
+    </BdsGrid>
   );
 };
