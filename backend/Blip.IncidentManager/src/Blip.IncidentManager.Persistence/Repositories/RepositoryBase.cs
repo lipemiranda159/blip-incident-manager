@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Blip.IncidentManager.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +36,24 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class
         return await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
+            .ToListAsync();
+    }
+
+    public async Task<List<TResult>> GetAllProjectedAsync<TResult>(
+        Expression<Func<T, TResult>> selector,
+        int pageNumber,
+        int pageSize,
+        params string[] includes)
+    {
+        IQueryable<T> query = _context.Set<T>();
+
+        foreach (var include in includes)
+            query = query.Include(include);
+
+        return await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(selector)
             .ToListAsync();
     }
 
