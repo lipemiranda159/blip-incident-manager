@@ -1,8 +1,9 @@
 using Blip.IncidentManager.Application.Common.Interfaces;
 using Blip.IncidentManager.Domain.Entities;
+using Blip.IncidentManager.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace Blip.IncidentManager.Infrastructure.Persistence.Repositories;
+namespace Blip.IncidentManager.Persistence.Repositories;
 
 public class IncidentRepository : IRepository<Incident>
 {
@@ -19,9 +20,12 @@ public class IncidentRepository : IRepository<Incident>
     public async Task<IEnumerable<Incident>> GetAllAsync() =>
         await _context.Incidents.ToListAsync();
 
-    public async Task AddAsync(Incident entity) =>
-        await _context.Incidents.AddAsync(entity);
-
+    public async Task<Incident> AddAsync(Incident entity)
+    {
+        entity.CreatedAt = DateTime.UtcNow;
+        var incident = await _context.Incidents.AddAsync(entity);
+        return incident.Entity;
+    }
     public void Update(Incident entity) =>
         _context.Incidents.Update(entity);
 
