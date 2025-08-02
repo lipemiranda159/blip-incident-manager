@@ -25,6 +25,18 @@ namespace Blip.IncidentManager.API.Extensions
             services.AddScoped<IUserService, UserService>();
 
             var config = services.AddServiceConfigurations(configuration);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins(config.Cors.AllowedOrigins)
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
             services.AddIncidentDbContext(config);
             services.AddIncidentManagerInfrastructure(config);
             services.AddIncidentManagerApplications();
