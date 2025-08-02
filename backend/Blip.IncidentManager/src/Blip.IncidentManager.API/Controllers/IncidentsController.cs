@@ -95,7 +95,7 @@ public class IncidentsController : ControllerBase
         _logger.LogInformation("Retrieving incidents. Page: {PageNumber}, Size: {PageSize}", pageNumber, pageSize);
         var query = new GetAllIncidentsQuery(pageNumber, pageSize);
         var result = await _mediator.Send(query);
-        _logger.LogInformation("Retrieved {Count} incidents on page {PageNumber} of {TotalPages}.", result?.Items.Count() ?? 0, result?.CurrentPage, result?.TotalPages);
+        _logger.LogInformation("Retrieved {Count} incidents on page {PageNumber} of {TotalPages}.", result?.Items?.Count() ?? 0, result?.CurrentPage, result?.TotalPages);
         return Ok(result);
     }
 }
