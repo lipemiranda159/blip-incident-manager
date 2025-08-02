@@ -97,17 +97,17 @@ public class IncidentDbContext : DbContext
 
             foreach (var key in entity.GetKeys())
             {
-                key.SetName(key.GetName().ToLowerInvariant());
+                key.SetName(key?.GetName().ToLowerInvariant());
             }
 
             foreach (var foreignKey in entity.GetForeignKeys())
             {
-                foreignKey.SetConstraintName(foreignKey.GetConstraintName().ToLowerInvariant());
+                foreignKey.SetConstraintName(foreignKey?.GetConstraintName()?.ToLowerInvariant());
             }
 
             foreach (var index in entity.GetIndexes())
             {
-                index.SetDatabaseName(index.GetDatabaseName().ToLowerInvariant());
+                index.SetDatabaseName(index?.GetDatabaseName()?.ToLowerInvariant());
             }
         }
     }

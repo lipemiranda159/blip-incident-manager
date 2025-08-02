@@ -17,8 +17,26 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class
     public virtual async Task<T?> GetByIdAsync(Guid id) =>
         await _dbSet.FindAsync(id);
 
-    public virtual async Task<IEnumerable<T>> GetAllAsync() =>
-        await _dbSet.ToListAsync();
+    public virtual async Task<IEnumerable<T>> GetAllAsync(
+        int pageNumber,
+        int pageSize,
+        params string[] includes)
+    {
+        IQueryable<T> query = _dbSet;
+
+        if (includes != null)
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        return await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
 
     public virtual async Task<T> AddAsync(T entity)
     {
@@ -31,4 +49,9 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class
 
     public virtual void Remove(T entity) =>
         _dbSet.Remove(entity);
+
+    public async Task<int> CountAsync()
+    {
+        return await _dbSet.CountAsync();
+    }
 }
