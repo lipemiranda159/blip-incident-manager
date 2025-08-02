@@ -2,9 +2,9 @@ using AutoMapper;
 using Blip.IncidentManager.Api.ServiceContracts.V1.Request;
 using Blip.IncidentManager.Application.DTOs;
 using Blip.IncidentManager.Application.Incidents;
-using Blip.IncidentManager.Application.Incidents.Commands;
 using Blip.IncidentManager.Application.Incidents.Commands.Insert;
 using Blip.IncidentManager.Application.Incidents.Commands.Update;
+using Blip.IncidentManager.Application.Incidents.Commands.Delete;
 using Blip.IncidentManager.Application.Incidents.Queries;
 using Devspark.Bizcore.ApiService.Services.auth;
 using MediatR;
@@ -65,14 +65,10 @@ public class IncidentsController : ControllerBase
     {
         _logger.LogInformation("Deleting incident with Id: {IncidentId}", id);
         var command = new DeleteIncidentCommand(id);
-        var result = await _mediator.Send(command);
-        if (!result)
-        {
-            _logger.LogWarning("Incident with Id: {IncidentId} not found for deletion.", id);
-            return NotFound();
-        }
+        await _mediator.Send(command);
+
         _logger.LogInformation("Incident with Id: {IncidentId} deleted.", id);
-        return NoContent();
+        return Ok();
     }
 
     [HttpGet("{id}")]

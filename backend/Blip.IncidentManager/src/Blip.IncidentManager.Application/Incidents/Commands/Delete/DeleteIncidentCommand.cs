@@ -2,4 +2,4 @@
 
 namespace Blip.IncidentManager.Application.Incidents.Commands.Delete;
 
-public record DeleteIncidentCommand(Guid Id) : IRequest<bool>;
+public record DeleteIncidentCommand(Guid Id) : IRequest<Unit>;
