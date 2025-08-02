@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ops", "ops", "{C24C4140-B13
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.Api.ServiceContracts", "src\Blip.IncidentManager.API.ServiceContract\Blip.IncidentManager.Api.ServiceContracts.csproj", "{9AD1D511-9231-4842-AE4C-DF1DCF96E466}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidenteManager.ServiceConfigurations", "src\Blip.IncidenteManager.ServiceConfigurations\Blip.IncidenteManager.ServiceConfigurations.csproj", "{527ED634-D4D8-41A0-A9EC-049CE099548B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip.IncidentManager.ServiceConfigurations", "src\Blip.IncidenteManager.ServiceConfigurations\Blip.IncidentManager.ServiceConfigurations.csproj", "{527ED634-D4D8-41A0-A9EC-049CE099548B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
