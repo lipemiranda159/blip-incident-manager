@@ -1,10 +1,8 @@
 using MediatR;
-using Blip.IncidentManager.Application.Commands;
-using Blip.IncidentManager.Application.DTOs;
 using Blip.IncidentManager.Domain.Entities;
-using Blip.IncidentManager.Application.Common.Interfaces;
+using Blip.IncidentManager.Application.Interfaces;
 
-namespace Blip.IncidentManager.Application.Handlers;
+namespace Blip.IncidentManager.Application.Incident.Commands.Insert;
 
 public class CreateIncidentCommandHandler : IRequestHandler<CreateIncidentCommand, IncidentDto>
 {

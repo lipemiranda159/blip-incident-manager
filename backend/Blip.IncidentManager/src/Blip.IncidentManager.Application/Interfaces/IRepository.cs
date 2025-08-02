@@ -1,4 +1,4 @@
-namespace Blip.IncidentManager.Application.Common.Interfaces;
+namespace Blip.IncidentManager.Application.Interfaces;
 
 public interface IRepository<T> where T : class
 {

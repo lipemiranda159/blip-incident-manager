@@ -1,6 +1,5 @@
-﻿using Blip.IncidentManager.Application.DTOs;
-using MediatR;
+﻿using MediatR;
 
-namespace Blip.IncidentManager.Application.Commands;
+namespace Blip.IncidentManager.Application.Incident.Commands;
 
 public record UpdateIncidentCommand(Guid Id, string Title, string Description, Guid AssignedUserId) : IRequest<IncidentDto>;

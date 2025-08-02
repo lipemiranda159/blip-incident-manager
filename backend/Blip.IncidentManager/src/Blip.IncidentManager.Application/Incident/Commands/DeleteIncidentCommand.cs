@@ -1,5 +1,5 @@
 ﻿using MediatR;
 
-namespace Blip.IncidentManager.Application.Commands;
+namespace Blip.IncidentManager.Application.Incident.Commands;
 
 public record DeleteIncidentCommand(Guid Id) : IRequest<bool>;

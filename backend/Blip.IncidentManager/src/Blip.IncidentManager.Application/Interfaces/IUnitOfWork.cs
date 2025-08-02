@@ -1,6 +1,6 @@
 using Blip.IncidentManager.Domain.Entities;
 
-namespace Blip.IncidentManager.Application.Common.Interfaces;
+namespace Blip.IncidentManager.Application.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {

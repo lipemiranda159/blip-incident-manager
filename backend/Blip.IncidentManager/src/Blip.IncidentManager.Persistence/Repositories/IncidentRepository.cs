@@ -1,4 +1,4 @@
-using Blip.IncidentManager.Application.Common.Interfaces;
+using Blip.IncidentManager.Application.Interfaces;
 using Blip.IncidentManager.Domain.Entities;
 using Blip.IncidentManager.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;

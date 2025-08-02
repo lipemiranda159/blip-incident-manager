@@ -1,6 +1,5 @@
 using MediatR;
-using Blip.IncidentManager.Application.DTOs;
 
-namespace Blip.IncidentManager.Application.Commands;
+namespace Blip.IncidentManager.Application.Incident.Commands.Insert;
 
 public record CreateIncidentCommand(string Title, string Description) : IRequest<IncidentDto>;
