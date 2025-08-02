@@ -10,7 +10,7 @@ public class User
 
     public string PasswordHash { get; set; } = default!;
 
-    // Relacionamentos
+    //// Relacionamentos
     public ICollection<Incident> CreatedIncidents { get; set; } = new List<Incident>();
     public ICollection<Incident> AssignedIncidents { get; set; } = new List<Incident>();
     public ICollection<Comment> Comments { get; set; } = new List<Comment>();

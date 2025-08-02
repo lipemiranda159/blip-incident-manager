@@ -13,7 +13,7 @@ public class Incident
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public string Category { get; set; } = default!;
+    public string? Category { get; set; } = default!;
 
     // Foreign keys
     public Guid CreatedById { get; set; }
