@@ -2,9 +2,8 @@
 using AutoMapper;
 using Blip.IncidentManager.Api.ServiceContracts.V1.Request;
 using Blip.IncidentManager.Application.Auth.Commands.Insert;
+using Blip.IncidentManager.Application.Auth.Commands.Login;
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blip.IncidentManager.API.Controllers
@@ -27,10 +26,11 @@ namespace Blip.IncidentManager.API.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             _logger.LogInformation("Login attempt for user: {Username}", request.Email);
-            var token = "dummy-jwt-token"; // Replace with actual token generation logic
+            var command = _mapper.Map<LoginCommand>(request);
+            var token = await _mediator.Send(command);
             return Ok(new { Token = token });
         }
 
