@@ -26,4 +26,5 @@ public class IncidentDto
     public DateTime UpdatedAt { get; set; }
 
     public UserDto CreatedBy { get; set; } = default!;
+    public UserDto? AssignedTo { get; set; } = default!;
 }
