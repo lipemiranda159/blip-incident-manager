@@ -79,10 +79,45 @@ public class IncidentDbContext : DbContext
 
         modelBuilder.Entity<Comment>(entity =>
         {
-            entity.HasKey(e => e.Id);
+            entity.ToTable("comments", "public");
+
+            entity.HasKey(e => e.Id)
+                  .HasName("comments_pkey");
+
+            entity.Property(e => e.Id)
+                  .HasColumnName("id")
+                  .IsRequired();
+
+            entity.Property(e => e.AuthorId)
+                  .HasColumnName("author_id")
+                  .IsRequired();
+
+            entity.Property(e => e.IncidentId)
+                  .HasColumnName("incident_id")
+                  .IsRequired();
+
+            entity.Property(e => e.Content)
+                  .HasColumnName("content")
+                  .HasColumnType("text")
+                  .IsRequired();
+
+            entity.Property(e => e.CreatedAt)
+                  .HasColumnName("created_at")
+                  .HasColumnType("timestamp without time zone")
+                  .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                  .IsRequired();
+
             entity.HasOne(e => e.Author)
-                  .WithMany()
-                  .HasForeignKey(e => e.AuthorId);
+                  .WithMany(u => u.Comments)  
+                  .HasForeignKey(e => e.AuthorId)
+                  .HasConstraintName("comments_author_id_fkey")
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Incident)
+                  .WithMany(i => i.Comments)  
+                  .HasForeignKey(e => e.IncidentId)
+                  .HasConstraintName("comments_incident_id_fkey")
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
 
