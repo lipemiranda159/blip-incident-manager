@@ -121,7 +121,7 @@ public class IncidentsController : ControllerBase
     {
         _logger.LogInformation("Removing comment {CommentId}", commentId);
 
-        var command = _mapper.Map<DeleteCommentCommand>(commentId);
+        var command = new DeleteCommentCommand(commentId, _userService.UserGuid);
 
         await _mediator.Send(command);
 
