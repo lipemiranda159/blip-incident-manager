@@ -1,4 +1,5 @@
 ﻿using Blip.IncidentManager.Domain.Entities;
+using Blip.IncidentManager.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blip.IncidentManager.Persistence.Repositories
@@ -8,5 +9,6 @@ namespace Blip.IncidentManager.Persistence.Repositories
         public UserRepository(DbContext context) : base(context)
         {
         }
+
     }
 }
