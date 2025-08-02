@@ -1,3 +1,3 @@
-namespace Blip.IncidentManager.Application.Incident;
+namespace Blip.IncidentManager.Application.Incidents;
 
 public record IncidentDto(Guid Id, string Title, string Description, DateTime CreatedAt);

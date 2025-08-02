@@ -3,10 +3,10 @@ using MediatR;
 using Blip.IncidentManager.Application.DTOs;
 using Blip.IncidentManager.Api.ServiceContracts.V1.Request;
 using AutoMapper;
-using Blip.IncidentManager.Application.Queries;
-using Blip.IncidentManager.Application.Incident.Commands;
-using Blip.IncidentManager.Application.Incident.Commands.Insert;
-using Blip.IncidentManager.Application.Incident;
+using Blip.IncidentManager.Application.Incidents;
+using Blip.IncidentManager.Application.Incidents.Commands;
+using Blip.IncidentManager.Application.Incidents.Commands.Insert;
+using Blip.IncidentManager.Application.Incidents.Queries;
 
 namespace Blip.IncidentManager.API.Controllers;
 

@@ -2,7 +2,7 @@ using MediatR;
 using Blip.IncidentManager.Domain.Entities;
 using Blip.IncidentManager.Application.Interfaces;
 
-namespace Blip.IncidentManager.Application.Incident.Commands.Insert;
+namespace Blip.IncidentManager.Application.Incidents.Commands.Insert;
 
 public class CreateIncidentCommandHandler : IRequestHandler<CreateIncidentCommand, IncidentDto>
 {
@@ -21,7 +21,7 @@ public class CreateIncidentCommandHandler : IRequestHandler<CreateIncidentComman
             Description = request.Description
         };
 
-        var newIncident = await _unitOfWork.Incidents.AddAsync(incident);
+        var newIncident = await _unitOfWork.GetIncidents().AddAsync(incident);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new IncidentDto(newIncident.Id, newIncident.Title, newIncident.Description, newIncident.CreatedAt);

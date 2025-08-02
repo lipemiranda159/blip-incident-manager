@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Blip.IncidentManager.Api.ServiceContracts.V1.Request;
-using Blip.IncidentManager.Application.Incident.Commands.Insert;
+using Blip.IncidentManager.Application.Incidents.Commands.Insert;
 
 namespace Blip.IncidentManager.API.Mappers.V1
 {
