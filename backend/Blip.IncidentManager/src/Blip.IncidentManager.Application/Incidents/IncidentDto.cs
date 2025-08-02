@@ -10,12 +10,13 @@ public class IncidentDto
         
     }
 
-    public IncidentDto(Guid id, string title, string description, DateTime createdAt)
+    public IncidentDto(Guid id, string title, string description, DateTime createdAt, UserDto user)
     {
         Id = id;
         Title = title;
         Description = description;
         CreatedAt = createdAt;
+        CreatedBy = user;
     }
 
     public Guid Id { get; set; }
