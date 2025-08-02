@@ -26,7 +26,7 @@ namespace Blip.IncidentManager.API.Extensions
 
             var config = services.AddServiceConfigurations(configuration);
             services.AddIncidentDbContext(config);
-            services.AddIncidentManagerInfrastructure();
+            services.AddIncidentManagerInfrastructure(config);
             services.AddIncidentManagerApplications();
 
             services.AddAutoMapper(cfg => cfg.AddMaps([typeof(Program).Assembly, typeof(IncidentMapperProfile).Assembly]));

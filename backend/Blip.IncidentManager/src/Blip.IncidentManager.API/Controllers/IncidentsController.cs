@@ -9,6 +9,7 @@ using Blip.IncidentManager.Application.Incidents.Commands.Insert;
 using Blip.IncidentManager.Application.Incidents.Commands.Update;
 using Blip.IncidentManager.Application.Incidents.Queries.GetAll;
 using Blip.IncidentManager.Application.Incidents.Queries.GetById;
+using Blip.IncidentManager.Application.Incidents.Queries.GetIncidentSummary;
 using Devspark.Bizcore.ApiService.Services.auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -99,6 +100,13 @@ public class IncidentsController : ControllerBase
         var result = await _mediator.Send(query);
         _logger.LogInformation("Retrieved {Count} incidents on page {PageNumber} of {TotalPages}.", result?.Items?.Count() ?? 0, result?.CurrentPage, result?.TotalPages);
         return Ok(result);
+    }
+
+    [HttpGet("{id}/summary")]
+    public async Task<ActionResult<IncidentSummaryDto>> GetSummary(Guid id)
+    {
+        var summary = await _mediator.Send(new GetIncidentSummaryQuery(id));
+        return Ok(summary);
     }
 
     [HttpPost("{incidentId}/comments")]
