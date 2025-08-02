@@ -7,16 +7,28 @@ namespace Blip.IncidentManager.Persistence.Contexts;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly IncidentDbContext _context;
-    public IRepository<Incident> Incidents { get; }
+    private readonly IRepository<Incident> incidents;
+    private readonly IRepository<User> users;
+
+    public IRepository<Incident> GetIncidents()
+    {
+        return incidents;
+    }
 
     public UnitOfWork(IncidentDbContext context)
     {
         _context = context;
-        Incidents = new IncidentRepository(_context);
+        incidents = new IncidentRepository(_context);
+        users = new UserRepository(_context);
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
         await _context.SaveChangesAsync(cancellationToken);
 
     public void Dispose() => _context.Dispose();
+
+    public IRepository<User> GetUsers()
+    {
+        return users;
+    }
 }
