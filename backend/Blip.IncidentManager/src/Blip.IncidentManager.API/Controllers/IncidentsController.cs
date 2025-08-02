@@ -1,15 +1,14 @@
-using System.Runtime.InteropServices;
 using AutoMapper;
 using Blip.IncidentManager.Api.ServiceContracts.V1.Request;
 using Blip.IncidentManager.Application.DTOs;
 using Blip.IncidentManager.Application.Incidents;
 using Blip.IncidentManager.Application.Incidents.Commands;
 using Blip.IncidentManager.Application.Incidents.Commands.Insert;
+using Blip.IncidentManager.Application.Incidents.Commands.Update;
 using Blip.IncidentManager.Application.Incidents.Queries;
 using Devspark.Bizcore.ApiService.Services.auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blip.IncidentManager.API.Controllers;
@@ -48,19 +47,17 @@ public class IncidentsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
-    [HttpPut("{id}")]
+    [HttpPatch("{id}")]
     public async Task<ActionResult<IncidentDto>> Update(Guid id, [FromBody] UpdateIncidentRequest request)
     {
         _logger.LogInformation("Updating incident with Id: {IncidentId}", id);
-        var command = _mapper.Map<UpdateIncidentCommand>(request) with { Id = id };
-        var result = await _mediator.Send(command);
-        if (result == null)
-        {
-            _logger.LogWarning("Incident with Id: {IncidentId} not found for update.", id);
-            return NotFound();
-        }
+        var command = _mapper.Map<UpdateIncidentCommand>(request);
+        command = command with { Id = id };
+        
+        await _mediator.Send(command);
+
         _logger.LogInformation("Incident with Id: {IncidentId} updated.", id);
-        return Ok(result);
+        return Ok();
     }
 
     [HttpDelete("{id}")]
