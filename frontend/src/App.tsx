@@ -16,7 +16,7 @@ import { AuthProvider, useAuthContext } from './contexts/AuthContext';
 
 // Component that uses the auth context
 function AppContent() {
-  const { user, isAuthenticated, login, logout } = useAuthContext();
+  const { user, isAuthenticated, logout } = useAuthContext();
   const {
     incidents,
     loading,
@@ -33,8 +33,6 @@ function AppContent() {
   // Modal management
   const incidentModal = useIncidentModal();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [loginLoading, setLoginLoading] = useState(false);
-
   // Incident operations with error handling
   const incidentOperations = useIncidentOperations({
     createIncident,
@@ -43,11 +41,10 @@ function AppContent() {
     getIncidentById
   });
 
-  const handleLogin = async (email: string, password: string) => {
-    setLoginLoading(true);
-    const success = await login(email, password);
-    setLoginLoading(false);
-    return success;
+  const handleLoginSuccess = (userData: any) => {
+    // The AuthContext will handle the login state update
+    // This callback is called when login is successful
+    console.log('Login successful:', userData);
   };
 
   const handleIncidentClick = (incident: Incident) => {
@@ -66,7 +63,7 @@ function AppContent() {
   };
 
   if (!isAuthenticated || !user) {
-    return <LoginForm onLogin={handleLogin} loading={loginLoading} />;
+    return <LoginForm onLoginSuccess={handleLoginSuccess} />;
   }
 
   return (
