@@ -1,3 +1,26 @@
 ﻿namespace Blip.IncidentManager.Application.Auth;
 
-public record UserDto(Guid Id, string Name, string Email, string Type, string Avatar);
+public class UserDto
+{
+    public UserDto()
+    {
+        
+    }
+
+    public UserDto(Guid id, string name, string email, string type, string avatar)
+    {
+        Id = id;
+        Name = name;
+        Email = email;
+        Type = type;
+        Avatar = avatar;
+    }
+
+    public Guid Id { get; set; }
+    public string Name { get; set; } = default!;
+    public string Email { get; set; } = default!;
+    public string Type { get; set; } = default!;
+    public string Avatar { get; set; } = default!;
+
+}
+
