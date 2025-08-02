@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Blip.IncidentManager.Application._Extensions;
+using Blip.IncidentManager.Application.Incidents.Mappers;
 using Blip.IncidentManager.Infrastructure.Extensions;
 using Blip.IncidentManager.Persistence.Extensions;
 using Blip.IncidentManager.ServiceConfigurations.Extensions;
@@ -28,7 +29,7 @@ namespace Blip.IncidentManager.API.Extensions
             services.AddIncidentManagerInfrastructure();
             services.AddIncidentManagerApplications();
 
-            services.AddAutoMapper(cfg => cfg.AddMaps(typeof(ServiceCollectionExtensions).Assembly));
+            services.AddAutoMapper(cfg => cfg.AddMaps([typeof(Program).Assembly, typeof(IncidentMapperProfile).Assembly]));
 
             var key = Encoding.UTF8.GetBytes(config.Jwt.Secret);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

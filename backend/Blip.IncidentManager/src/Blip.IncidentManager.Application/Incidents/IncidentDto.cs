@@ -1,4 +1,5 @@
 using Blip.IncidentManager.Application.Auth;
+using Blip.IncidentManager.Application.Comments;
 
 namespace Blip.IncidentManager.Application.Incidents;
 
@@ -27,4 +28,6 @@ public class IncidentDto
 
     public UserDto CreatedBy { get; set; } = default!;
     public UserDto? AssignedTo { get; set; } = default!;
+
+    public IEnumerable<CommentDto> Comments { get; set; } = default!;
 }
