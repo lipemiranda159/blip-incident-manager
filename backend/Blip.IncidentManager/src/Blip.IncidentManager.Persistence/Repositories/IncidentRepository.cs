@@ -12,4 +12,11 @@ public class IncidentRepository : RepositoryBase<Incident>
         entity.CreatedAt = DateTime.UtcNow;
         return await base.AddAsync(entity);
     }
+
+    public override void Update(Incident entity)
+    {
+        entity.CreatedAt = DateTime.SpecifyKind(entity.CreatedAt, DateTimeKind.Utc);
+        entity.UpdatedAt = DateTime.UtcNow;
+        base.Update(entity);
+    }
 }
