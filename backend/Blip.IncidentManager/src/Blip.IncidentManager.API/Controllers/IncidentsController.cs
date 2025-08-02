@@ -1,7 +1,7 @@
 using AutoMapper;
 using Blip.IncidentManager.Api.ServiceContracts.V1.Request;
 using Blip.IncidentManager.Application.Comments;
-using Blip.IncidentManager.Application.Comments.Commands;
+using Blip.IncidentManager.Application.Comments.Commands.Insert;
 using Blip.IncidentManager.Application.DTOs;
 using Blip.IncidentManager.Application.Incidents;
 using Blip.IncidentManager.Application.Incidents.Commands.Delete;
@@ -67,7 +67,7 @@ public class IncidentsController : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         _logger.LogInformation("Deleting incident with Id: {IncidentId}", id);
-        var command = new DeleteIncidentCommand(id);
+        var command = new DeleteCommentCommand(id);
         await _mediator.Send(command);
 
         _logger.LogInformation("Incident with Id: {IncidentId} deleted.", id);
