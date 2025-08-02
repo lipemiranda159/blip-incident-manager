@@ -1,8 +1,8 @@
 using Blip.IncidentManager.Application.Common.Interfaces;
 using Blip.IncidentManager.Domain.Entities;
-using Blip.IncidentManager.Infrastructure.Persistence.Repositories;
+using Blip.IncidentManager.Persistence.Repositories;
 
-namespace Blip.IncidentManager.Infrastructure.Persistence;
+namespace Blip.IncidentManager.Persistence.Contexts;
 
 public class UnitOfWork : IUnitOfWork
 {

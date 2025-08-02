@@ -1,7 +1,7 @@
 using Blip.IncidentManager.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Blip.IncidentManager.Infrastructure.Persistence;
+namespace Blip.IncidentManager.Persistence.Contexts;
 
 public class IncidentDbContext : DbContext
 {
@@ -45,5 +45,31 @@ public class IncidentDbContext : DbContext
                   .WithMany()
                   .HasForeignKey(e => e.AuthorId);
         });
+
+
+        foreach (var entity in modelBuilder.Model.GetEntityTypes())
+        {
+            entity.SetTableName(entity.GetTableName().ToLowerInvariant());
+
+            foreach (var property in entity.GetProperties())
+            {
+                property.SetColumnName(property.GetColumnName().ToLowerInvariant());
+            }
+
+            foreach (var key in entity.GetKeys())
+            {
+                key.SetName(key.GetName().ToLowerInvariant());
+            }
+
+            foreach (var foreignKey in entity.GetForeignKeys())
+            {
+                foreignKey.SetConstraintName(foreignKey.GetConstraintName().ToLowerInvariant());
+            }
+
+            foreach (var index in entity.GetIndexes())
+            {
+                index.SetDatabaseName(index.GetDatabaseName().ToLowerInvariant());
+            }
+        }
     }
 }
