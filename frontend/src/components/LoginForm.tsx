@@ -7,25 +7,40 @@ import {
   BdsAlert
 } from 'blip-ds/dist/blip-ds-react/components';
 import React, { useState } from 'react';
+import { useAuthContext } from '../contexts/AuthContext';
 
 interface LoginFormProps {
-  onLogin: (email: string, password: string) => Promise<boolean>;
-  loading?: boolean;
+  onLoginSuccess?: (userData: any) => void;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, loading = false }) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
+  const { login, error: authError, isLoading } = useAuthContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [localError, setLocalError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setLocalError('');
     
-    const success = await onLogin(email, password);
-    if (!success) {
-      setError('Email ou senha inválidos');
+    // Validate form
+    if (!email || !password) {
+      setLocalError('Por favor, preencha todos os campos');
+      return;
+    }
+    
+    try {
+      const success = await login(email, password);
+      
+      if (success) {
+        // Login successful - the AuthContext will handle state updates
+        // and the App component will automatically redirect to the main screen
+        onLoginSuccess?.({ email });
+      }
+    } catch (error) {
+      // Error is already handled by AuthContext
+      console.error('Login error:', error);
     }
   };
 
@@ -80,7 +95,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, loading = false }
               type="email"
               value={email}
               placeholder="seu@email.com"
-              disabled={loading}
+              disabled={isLoading}
               onBdsChange={(e: CustomEvent) => setEmail(e.detail.value || '')}
             />
           </BdsGrid>
@@ -94,7 +109,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, loading = false }
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 placeholder="••••••••"
-                disabled={loading}
+                disabled={isLoading}
                 onBdsChange={(e: CustomEvent) => setPassword(e.detail.value || '')}
                 style={{ width: '100%' }}
               />
@@ -103,7 +118,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, loading = false }
                 size="short"
                 icon={showPassword ? 'eye-closed' : 'eye-open'}
                 onBdsClick={() => setShowPassword(!showPassword)}
-                disabled={loading}
+                disabled={isLoading}
                 style={{ 
                   position: 'absolute', 
                   right: '8px', 
@@ -115,12 +130,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, loading = false }
             </BdsGrid>
           </BdsGrid>
 
-          {error && (
+          {(localError || authError) && (
             <BdsAlert>
               <BdsGrid direction="row" align-items="center" gap="1">
                 <BdsIcon name="warning" size="small" />
                 <BdsTypo variant="fs-14" color="danger">
-                  {error}
+                  {localError || authError}
                 </BdsTypo>
               </BdsGrid>
             </BdsAlert>
@@ -129,11 +144,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, loading = false }
           <BdsButton
             variant="primary"
             size="medium"
-            disabled={loading}
+            disabled={isLoading || !email || !password}
             onBdsClick={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
             style={{ width: '100%' }}
           >
-            {loading ? 'Entrando...' : 'Entrar'}
+            {isLoading ? 'Entrando...' : 'Entrar'}
           </BdsButton>
         </BdsGrid>
 
