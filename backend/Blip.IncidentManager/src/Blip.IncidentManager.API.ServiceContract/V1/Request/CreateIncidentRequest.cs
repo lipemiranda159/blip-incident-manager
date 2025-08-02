@@ -4,5 +4,4 @@ public record CreateIncidentRequest(
     string Title,
     string Description,
     string Priority,
-    string? Category,
-    Guid CreatedBy);
+    string? Category);
