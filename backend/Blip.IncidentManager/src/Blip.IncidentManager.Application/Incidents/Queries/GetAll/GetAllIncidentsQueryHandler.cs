@@ -1,7 +1,6 @@
 ﻿using Blip.IncidentManager.Application.Auth;
 using Blip.IncidentManager.Application.DTOs;
 using Blip.IncidentManager.Application.Interfaces;
-using Blip.IncidentManager.Domain.Entities;
 using MediatR;
 
 namespace Blip.IncidentManager.Application.Incidents.Queries.GetAll
