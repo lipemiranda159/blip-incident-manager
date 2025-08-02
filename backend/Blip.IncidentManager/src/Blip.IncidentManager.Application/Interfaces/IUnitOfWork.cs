@@ -6,6 +6,6 @@ public interface IUnitOfWork : IDisposable
 {
     IRepository<Incident> GetIncidents();
 
-    IRepository<User> GetUsers();
+    IUserRepository GetUsers();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

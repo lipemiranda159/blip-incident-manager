@@ -8,12 +8,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly IncidentDbContext _context;
     private readonly IRepository<Incident> incidents;
-    private readonly IRepository<User> users;
-
-    public IRepository<Incident> GetIncidents()
-    {
-        return incidents;
-    }
+    private readonly IUserRepository users;
 
     public UnitOfWork(IncidentDbContext context)
     {
@@ -22,12 +17,17 @@ public class UnitOfWork : IUnitOfWork
         users = new UserRepository(_context);
     }
 
+    public IRepository<Incident> GetIncidents()
+    {
+        return incidents;
+    }
+
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
         await _context.SaveChangesAsync(cancellationToken);
 
     public void Dispose() => _context.Dispose();
 
-    public IRepository<User> GetUsers()
+    public IUserRepository GetUsers()
     {
         return users;
     }

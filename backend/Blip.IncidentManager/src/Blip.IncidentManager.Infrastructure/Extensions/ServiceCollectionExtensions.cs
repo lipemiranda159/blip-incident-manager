@@ -1,4 +1,5 @@
-﻿using Blip.IncidentManager.Domain.Interfaces;
+﻿using Blip.IncidentManager.Application.Interfaces;
+using Blip.IncidentManager.Domain.Interfaces;
 using Blip.IncidentManager.Infrastructure.ExternalServices;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,6 +9,7 @@ namespace Blip.IncidentManager.Infrastructure.Extensions
     {
         public static IServiceCollection AddIncidentManagerInfrastructure(this IServiceCollection services)
         {
+            services.AddSingleton<IJwtTokenGeneratorService, JwtTokenGeneratorService>();
             services.AddScoped<IPasswordHasher, IdentityPasswordHasher>();
             return services;
         }
