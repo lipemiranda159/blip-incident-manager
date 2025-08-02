@@ -1,12 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Blip.IncidenteManager.ServiceConfigurations\Blip.IncidenteManager.ServiceConfigurations.csproj" />
+    <ProjectReference Include="..\Blip.IncidenteManager.ServiceConfigurations\Blip.IncidentManager.ServiceConfigurations.csproj" />
+    <ProjectReference Include="..\Blip.IncidentManager.Application\Blip.IncidentManager.Application.csproj" />
     <ProjectReference Include="..\Blip.IncidentManager.Domain\Blip.IncidentManager.Domain.csproj" />
   </ItemGroup>
 
