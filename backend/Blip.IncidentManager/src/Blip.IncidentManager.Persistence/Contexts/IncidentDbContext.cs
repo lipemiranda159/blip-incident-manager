@@ -53,8 +53,12 @@ public class IncidentDbContext : DbContext
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.Priority).HasColumnName("priority");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
-            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+            entity.Property(e => e.CreatedAt)
+                  .HasColumnName("created_at")
+                  .HasColumnType("timestamp with time zone");
+            entity.Property(e => e.UpdatedAt)
+                  .HasColumnName("updated_at")
+                  .HasColumnType("timestamp with time zone"); 
             entity.Property(e => e.Category).HasColumnName("category");
 
             entity.Property(e => e.CreatedById).HasColumnName("created_by_id");
