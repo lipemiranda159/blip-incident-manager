@@ -1,6 +1,6 @@
-﻿using Blip.IncidenteManager.ServiceConfigurations.Section;
+﻿using Blip.IncidentManager.ServiceConfigurations.Section;
 
-namespace Blip.IncidenteManager.ServiceConfigurations
+namespace Blip.IncidentManager.ServiceConfigurations
 {
     public class AppConfig
     {

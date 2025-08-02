@@ -1,4 +1,4 @@
-﻿namespace Blip.IncidenteManager.ServiceConfigurations.Section
+﻿namespace Blip.IncidentManager.ServiceConfigurations.Section
 {
     public class Database
     {

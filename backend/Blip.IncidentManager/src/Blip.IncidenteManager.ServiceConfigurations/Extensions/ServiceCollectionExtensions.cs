@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Blip.IncidentManager.ServiceConfigurations;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Blip.IncidenteManager.ServiceConfigurations.Extensions
+namespace Blip.IncidentManager.ServiceConfigurations.Extensions
 {
     public static class ServiceCollectionExtensions
     {
