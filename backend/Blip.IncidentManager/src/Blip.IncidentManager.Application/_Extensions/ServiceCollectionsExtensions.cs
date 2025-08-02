@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MediatR;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
+using Blip.IncidentManager.Application.Services;
 
 namespace Blip.IncidentManager.Application._Extensions
 {
@@ -11,6 +14,8 @@ namespace Blip.IncidentManager.Application._Extensions
                 config.RegisterServicesFromAssemblies(typeof(ServiceCollectionsExtensions).Assembly);
             });
 
+            services.AddValidatorsFromAssembly(typeof(ServiceCollectionsExtensions).Assembly, lifetime: ServiceLifetime.Scoped);
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehaviour<,>));
 
             return services;
         }

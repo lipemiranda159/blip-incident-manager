@@ -42,7 +42,7 @@ public class IncidentsController : ControllerBase
     public async Task<ActionResult<IncidentDto>> Create([FromBody] CreateIncidentRequest request)
     {
         _logger.LogInformation("Creating a new incident.");
-  
+
         var command = _mapper.Map<CreateIncidentCommand>(request);
 
         var result = await _mediator.Send(command with { CreatedBy = _userService.UserGuid });
@@ -56,7 +56,7 @@ public class IncidentsController : ControllerBase
         _logger.LogInformation("Updating incident with Id: {IncidentId}", id);
         var command = _mapper.Map<UpdateIncidentCommand>(request);
         command = command with { Id = id };
-        
+
         await _mediator.Send(command);
 
         _logger.LogInformation("Incident with Id: {IncidentId} updated.", id);
@@ -67,7 +67,7 @@ public class IncidentsController : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         _logger.LogInformation("Deleting incident with Id: {IncidentId}", id);
-        var command = new DeleteCommentCommand(id);
+        var command = new DeleteCommentCommand(id, _userService.UserGuid);
         await _mediator.Send(command);
 
         _logger.LogInformation("Incident with Id: {IncidentId} deleted.", id);
@@ -114,5 +114,18 @@ public class IncidentsController : ControllerBase
 
         _logger.LogInformation("Comment added to incident {IncidentId} with CommentId: {CommentId}", incidentId, result.Id);
         return CreatedAtAction(nameof(GetById), new { id = incidentId }, result);
+    }
+
+    [HttpDelete("{commentId}/comments")]
+    public async Task<ActionResult<CommentDto>> DeleteComment(Guid commentId)
+    {
+        _logger.LogInformation("Removing comment {CommentId}", commentId);
+
+        var command = _mapper.Map<DeleteCommentCommand>(commentId);
+
+        await _mediator.Send(command);
+
+        _logger.LogInformation("Comment deleted: {CommentId}", commentId);
+        return Ok();
     }
 }
