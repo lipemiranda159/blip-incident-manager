@@ -1,5 +1,6 @@
-﻿using Blip.IncidenteManager.ServiceConfigurations;
-using Blip.IncidentManager.Infrastructure.Persistence;
+﻿using Blip.IncidentManager.Application.Common.Interfaces;
+using Blip.IncidentManager.Persistence.Contexts;
+using Blip.IncidentManager.ServiceConfigurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +16,10 @@ namespace Blip.IncidentManager.Persistence.Extensions
                 options.UseNpgsql(connectionString, npgsqlOptions =>
                 {
                     npgsqlOptions.SetPostgresVersion(17, 0);
-                }));
+                }).UseSnakeCaseNamingConvention());
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             return services;
         }
     }
