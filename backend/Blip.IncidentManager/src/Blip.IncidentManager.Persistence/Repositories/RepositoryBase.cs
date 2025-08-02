@@ -15,8 +15,22 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class
         _dbSet = context.Set<T>();
     }
 
-    public virtual async Task<T?> GetByIdAsync(Guid id) =>
-        await _dbSet.FindAsync(id);
+    public virtual async Task<T?> GetByIdAsync(Guid id, params string[] includes)
+    {
+        IQueryable<T> query = _dbSet;
+
+        if (includes != null && includes.Length > 0)
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.FirstOrDefaultAsync(e => EF.Property<Guid>(e, "Id") == id);
+        }
+
+        return await _dbSet.FindAsync(id);
+    }
 
     public virtual async Task<IEnumerable<T>> GetAllAsync(
         int pageNumber,
