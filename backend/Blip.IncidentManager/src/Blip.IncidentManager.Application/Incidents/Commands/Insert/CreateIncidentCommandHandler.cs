@@ -1,6 +1,7 @@
 using MediatR;
 using Blip.IncidentManager.Domain.Entities;
 using Blip.IncidentManager.Application.Interfaces;
+using Blip.IncidentManager.Application.Auth;
 
 namespace Blip.IncidentManager.Application.Incidents.Commands.Insert;
 
@@ -28,6 +29,14 @@ public class CreateIncidentCommandHandler : IRequestHandler<CreateIncidentComman
         var newIncident = await _unitOfWork.GetIncidents().AddAsync(incident);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new IncidentDto(newIncident.Id, newIncident.Title, newIncident.Description, newIncident.CreatedAt);
+        var user = await _unitOfWork.GetUsers().GetByIdAsync(request.CreatedBy);
+        var userDto = new UserDto
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email
+        };
+
+        return new IncidentDto(newIncident.Id, newIncident.Title, newIncident.Description, newIncident.CreatedAt, userDto);
     }
 }
