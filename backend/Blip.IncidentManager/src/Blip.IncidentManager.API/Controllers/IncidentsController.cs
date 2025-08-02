@@ -1,15 +1,20 @@
-using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using Blip.IncidentManager.Application.DTOs;
-using Blip.IncidentManager.Api.ServiceContracts.V1.Request;
+using System.Runtime.InteropServices;
 using AutoMapper;
+using Blip.IncidentManager.Api.ServiceContracts.V1.Request;
+using Blip.IncidentManager.Application.DTOs;
 using Blip.IncidentManager.Application.Incidents;
 using Blip.IncidentManager.Application.Incidents.Commands;
 using Blip.IncidentManager.Application.Incidents.Commands.Insert;
 using Blip.IncidentManager.Application.Incidents.Queries;
+using Devspark.Bizcore.ApiService.Services.auth;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Blip.IncidentManager.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class IncidentsController : ControllerBase
@@ -17,23 +22,28 @@ public class IncidentsController : ControllerBase
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
     private readonly ILogger<IncidentsController> _logger;
+    private readonly IUserService _userService;
 
     public IncidentsController(
         IMediator mediator,
         IMapper mapper,
-        ILogger<IncidentsController> logger)
+        ILogger<IncidentsController> logger,
+        IUserService userService)
     {
         _mediator = mediator;
         _mapper = mapper;
         _logger = logger;
+        _userService = userService;
     }
 
     [HttpPost]
     public async Task<ActionResult<IncidentDto>> Create([FromBody] CreateIncidentRequest request)
     {
         _logger.LogInformation("Creating a new incident.");
+  
         var command = _mapper.Map<CreateIncidentCommand>(request);
-        var result = await _mediator.Send(command);
+
+        var result = await _mediator.Send(command with { CreatedBy = _userService.UserGuid });
         _logger.LogInformation("Incident created with Id: {IncidentId}", result.Id);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }

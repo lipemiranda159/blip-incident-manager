@@ -18,7 +18,11 @@ public class CreateIncidentCommandHandler : IRequestHandler<CreateIncidentComman
         var incident = new Incident
         {
             Title = request.Title,
-            Description = request.Description
+            Description = request.Description,
+            CreatedById = request.CreatedBy,
+            Status = "Aberto",
+            Priority = request.Priority,
+            Category = request.Category,
         };
 
         var newIncident = await _unitOfWork.GetIncidents().AddAsync(incident);
