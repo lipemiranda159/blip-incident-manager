@@ -1,4 +1,5 @@
 ﻿using Blip.IncidentManager.Application._Extensions;
+using Blip.IncidentManager.Infrastructure.Extensions;
 using Blip.IncidentManager.Persistence.Extensions;
 using Blip.IncidentManager.ServiceConfigurations.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ namespace Blip.IncidentManager.API.Extensions
         {
             var config = services.AddServiceConfigurations(configuration);
             services.AddIncidentDbContext(config);
+            services.AddIncidentManagerInfrastructure();
             services.AddIncidentManagerApplications();
 
             services.AddAutoMapper(cfg => cfg.AddMaps(typeof(ServiceCollectionExtensions).Assembly));

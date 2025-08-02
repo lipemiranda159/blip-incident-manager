@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="9.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Blip.IncidentManager.Application\Blip.IncidentManager.Application.csproj" />
     <ProjectReference Include="..\Blip.IncidentManager.Persistence\Blip.IncidentManager.Persistence.csproj" />
   </ItemGroup>
