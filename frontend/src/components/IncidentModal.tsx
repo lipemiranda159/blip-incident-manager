@@ -29,13 +29,14 @@ interface IncidentModalProps {
 export const IncidentModal = ({
   incident,
   currentUser,
+  onClose,
   onStatusUpdate,
   onAddComment
 }: IncidentModalProps) => {
   const [newComment, setNewComment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-
+  // Use scroll lock properly - it will be cleaned up when component unmounts
   useBodyScrollLock(true)
 
   const formatDate = (date: string) =>
@@ -66,13 +67,35 @@ export const IncidentModal = ({
 
 
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    // Close modal when clicking on backdrop
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <BdsModal
-      open={true}
-      outzone-close={true}
-      close-button={true}
-      size='dynamic'
-      style={{ maxHeight: '85vh', overflow: 'hidden' }}>
+    <div 
+      onClick={handleBackdropClick}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999
+      }}
+    >
+      <BdsModal
+        open={true}
+        outzone-close={false}
+        close-button={true}
+        size='dynamic'
+        style={{ maxHeight: '85vh', overflow: 'hidden' }}>
       <div style={{ maxHeight: '75vh', overflowY: 'auto', padding: '16px' }}>
         {/* Header Section */}
         <BdsGrid direction="column" gap="1">
@@ -238,6 +261,7 @@ export const IncidentModal = ({
           </BdsGrid>
         </BdsGrid>
       </div>
-    </BdsModal >
+      </BdsModal>
+    </div>
   )
 }
