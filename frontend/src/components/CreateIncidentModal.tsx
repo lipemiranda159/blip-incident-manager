@@ -88,7 +88,7 @@ export const CreateIncidentModal = ({
               </BdsTypo>
               <BdsInput
                 value={formData.title}
-                onBdsChange={(e) => setFormData(prev => ({ ...prev, title: e.detail }))}
+                onBdsChange={(e) => setFormData(prev => ({ ...prev, title: e.detail.value }))}
                 placeholder="Digite o título do incidente"
                 required
               />
@@ -100,7 +100,7 @@ export const CreateIncidentModal = ({
               </BdsTypo>
               <BdsInput
                 value={formData.description}
-                onBdsChange={(e) => setFormData(prev => ({ ...prev, description: e.detail }))}
+                onBdsChange={(e) => setFormData(prev => ({ ...prev, description: e.detail.value }))}
                 placeholder="Descreva o incidente em detalhes"
                 isTextarea
                 required
@@ -114,7 +114,7 @@ export const CreateIncidentModal = ({
                 </BdsTypo>
                 <BdsSelect
                   value={formData.priority}
-                  onBdsChange={(e) => setFormData(prev => ({ ...prev, priority: e.detail as unknown as Incident['priority'] }))}
+                  onBdsChange={(e) => setFormData(prev => ({ ...prev, priority: e.detail.value as unknown as Incident['priority'] }))}
                 >
                   <BdsSelectOption value="Baixa">Baixa</BdsSelectOption>
                   <BdsSelectOption value="Média">Média</BdsSelectOption>
@@ -129,7 +129,7 @@ export const CreateIncidentModal = ({
                 </BdsTypo>
                 <BdsInput
                   value={formData.category}
-                  onBdsChange={(e) => setFormData(prev => ({ ...prev, category: e.detail }))}
+                  onBdsChange={(e) => setFormData(prev => ({ ...prev, category: e.detail.value }))}
                   placeholder="Categoria do incidente"
                 />
               </BdsGrid>
