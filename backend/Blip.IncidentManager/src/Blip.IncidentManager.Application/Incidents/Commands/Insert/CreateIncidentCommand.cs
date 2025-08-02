@@ -2,9 +2,11 @@ using MediatR;
 
 namespace Blip.IncidentManager.Application.Incidents.Commands.Insert;
 
-public record CreateIncidentCommand(
-    string Title,
-    string Description,
-    string Priority,
-    string? Category,
-    Guid CreatedBy) : IRequest<IncidentDto>;
+public class CreateIncidentCommand : IRequest<IncidentDto>
+{
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Priority { get; set; } = string.Empty;
+    public string? Category { get; set; } = null;
+    public Guid CreatedBy { get; set; } = Guid.Empty;
+}
