@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react';
 import type { User } from '../types';
+import { apiClient } from '../services';
 
 // Types
 interface AuthState {
@@ -24,23 +25,16 @@ type AuthAction =
   | { type: 'RESTORE_SESSION'; payload: User }
   | { type: 'CLEAR_ERROR' };
 
-// Mock users data
-const mockUsers: User[] = [
-  {
-    id: '1',
-    name: 'João Silva',
-    email: 'joao@empresa.com',
-    type: 'solicitante',
-    avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
-  },
-  {
-    id: '2',
-    name: 'Maria Santos',
-    email: 'maria@empresa.com',
-    type: 'atendente',
-    avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
-  }
-];
+// Helper function to map API user data to local User type
+const mapApiUserToUser = (apiUser: any): User => {
+  return {
+    id: apiUser.id || apiUser.userId || '1',
+    name: apiUser.name || apiUser.userName || 'Usuário',
+    email: apiUser.email || '',
+    type: apiUser.type || 'solicitante',
+    avatar: apiUser.avatar || 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+  };
+};
 
 // Initial state
 const initialState: AuthState = {
@@ -115,18 +109,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Restore session on app load
   useEffect(() => {
     const restoreSession = () => {
-      const authToken = sessionStorage.getItem('authToken');
-      const savedUser = sessionStorage.getItem('user');
+      const authToken = localStorage.getItem('authToken');
+      const savedUser = localStorage.getItem('user');
       
       if (authToken && savedUser) {
         try {
           const user = JSON.parse(savedUser);
-          // In production, you would validate the token with the backend
+          
+          // Set token in API client for subsequent requests
+          apiClient.setAuthToken(authToken);
+          
           dispatch({ type: 'RESTORE_SESSION', payload: user });
         } catch (error) {
           // Clear corrupted data
-          sessionStorage.removeItem('authToken');
-          sessionStorage.removeItem('user');
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('user');
+          apiClient.clearAuthToken();
           console.error('Failed to restore session:', error);
         }
       }
@@ -140,24 +138,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     dispatch({ type: 'LOGIN_START' });
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await apiClient.auth.login({ email, password });
       
-      const user = mockUsers.find(u => u.email === email);
-      
-      if (user && password === '123456') {
-        // In production, you would receive a JWT from the backend
-        const mockToken = `mock-jwt-${user.id}-${Date.now()}`;
+      if (response.status === 200 && response.data) {
+        // Extract token from response (should be in response.data.token based on new Swagger)
+        const token = response.data.token || response.data.accessToken;
         
-        // Store secure session data
-        sessionStorage.setItem('authToken', mockToken);
-        sessionStorage.setItem('user', JSON.stringify({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          type: user.type,
-          avatar: user.avatar
-        }));
+        if (!token) {
+          console.warn('No token received from login response:', response.data);
+          dispatch({ type: 'LOGIN_FAILURE', payload: 'Token de autenticação não recebido' });
+          return false;
+        }
+
+        // Map API response to User type
+        const user = mapApiUserToUser(response.data.user || response.data);
+        
+        // Store user data and token in localStorage for session persistence
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('authToken', token);
+        
+        // Set token in API client for subsequent requests
+        apiClient.setAuthToken(token);
         
         dispatch({ type: 'LOGIN_SUCCESS', payload: user });
         return true;
@@ -166,7 +167,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return false;
       }
     } catch (error) {
-      dispatch({ type: 'LOGIN_FAILURE', payload: 'Erro interno do servidor' });
+      const errorMessage = error instanceof Error ? error.message : 'Erro interno do servidor';
+      dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage });
       return false;
     }
   };
@@ -174,10 +176,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Logout function
   const logout = () => {
     // Clear all authentication data
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('user');
-    // Backward compatibility
     localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
+    apiClient.clearAuthToken();
     
     dispatch({ type: 'LOGOUT' });
   };
