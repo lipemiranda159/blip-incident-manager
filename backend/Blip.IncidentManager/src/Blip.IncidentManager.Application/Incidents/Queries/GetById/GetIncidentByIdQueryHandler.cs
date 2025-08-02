@@ -18,7 +18,7 @@ namespace Blip.IncidentManager.Application.Incidents.Queries.GetById
 
         public async Task<IncidentDto> Handle(GetIncidentByIdQuery request, CancellationToken cancellationToken)
         {
-            var incident = await _unitOfWork.GetIncidents().GetByIdAsync(request.Id);
+            var incident = await _unitOfWork.GetIncidents().GetByIdAsync(request.Id, "Comments");
 
             if (incident == null)
             {

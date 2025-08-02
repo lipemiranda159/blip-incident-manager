@@ -1,5 +1,7 @@
 using AutoMapper;
 using Blip.IncidentManager.Api.ServiceContracts.V1.Request;
+using Blip.IncidentManager.Application.Comments;
+using Blip.IncidentManager.Application.Comments.Commands;
 using Blip.IncidentManager.Application.DTOs;
 using Blip.IncidentManager.Application.Incidents;
 using Blip.IncidentManager.Application.Incidents.Commands.Delete;
@@ -97,5 +99,20 @@ public class IncidentsController : ControllerBase
         var result = await _mediator.Send(query);
         _logger.LogInformation("Retrieved {Count} incidents on page {PageNumber} of {TotalPages}.", result?.Items?.Count() ?? 0, result?.CurrentPage, result?.TotalPages);
         return Ok(result);
+    }
+
+    [HttpPost("{incidentId}/comments")]
+    public async Task<ActionResult<CommentDto>> AddComment(Guid incidentId, [FromBody] CreateCommentRequest request)
+    {
+        _logger.LogInformation("Adding comment to incident {IncidentId}", incidentId);
+
+        var command = _mapper.Map<CreateCommentCommand>(request);
+        command.IncidentId = incidentId;
+        command.AuthorId = _userService.UserGuid;
+
+        var result = await _mediator.Send(command);
+
+        _logger.LogInformation("Comment added to incident {IncidentId} with CommentId: {CommentId}", incidentId, result.Id);
+        return CreatedAtAction(nameof(GetById), new { id = incidentId }, result);
     }
 }

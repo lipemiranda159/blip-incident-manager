@@ -1,10 +1,17 @@
 ﻿using Blip.IncidentManager.Application.Auth;
-using Blip.IncidentManager.Application.Incidents;
 
 namespace Blip.IncidentManager.Application.Comments
 {
     public class CommentDto
     {
+        public CommentDto(Guid id, Guid authorId,Guid incidentId, string content)
+        {
+            Id = id;
+            AuthorId = authorId;
+            Content = content;
+            IncidentId = incidentId;
+        }
+
         public Guid Id { get; set; }
 
         public string Content { get; set; } = default!;
@@ -15,6 +22,6 @@ namespace Blip.IncidentManager.Application.Comments
         public UserDto Author { get; set; } = default!;
 
         public Guid IncidentId { get; set; }
-        public IncidentDto Incident { get; set; } = default!;
+
     }
 }
