@@ -45,8 +45,8 @@ public class IncidentsController : ControllerBase
         _logger.LogInformation("Creating a new incident.");
 
         var command = _mapper.Map<CreateIncidentCommand>(request);
-
-        var result = await _mediator.Send(command with { CreatedBy = _userService.UserGuid });
+        command.CreatedBy = _userService.UserGuid;
+        var result = await _mediator.Send(command);
         _logger.LogInformation("Incident created with Id: {IncidentId}", result.Id);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
