@@ -60,7 +60,6 @@ export interface CreateIncidentRequest {
   description: string | null;
   priority: string | null;
   category: string | null;
-  createdBy: string;
 }
 
 export interface UpdateIncidentRequest {
@@ -73,6 +72,20 @@ export interface UpdateIncidentRequest {
 
 export interface CreateCommentRequest {
   content: string | null;
+}
+
+// Authentication response types
+export interface LoginResponse {
+  token: string;
+  user?: UserDto;
+  // Alternative token field names for flexibility
+  accessToken?: string;
+}
+
+export interface RegisterResponse {
+  token?: string;
+  user?: UserDto;
+  message?: string;
 }
 
 // API Response wrapper

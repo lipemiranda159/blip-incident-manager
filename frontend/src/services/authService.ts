@@ -1,5 +1,5 @@
 import { HttpClient } from './httpClient';
-import { LoginRequest, RegisterUserRequest, ApiResponse } from './types';
+import type { LoginRequest, RegisterUserRequest, LoginResponse, RegisterResponse, ApiResponse } from './types';
 
 export class AuthService {
   private httpClient: HttpClient;
@@ -11,15 +11,16 @@ export class AuthService {
   /**
    * Authenticate user with email and password
    * @param loginData - User login credentials
-   * @returns Promise with authentication response
+   * @returns Promise with authentication response containing JWT token
    */
-  public async login(loginData: LoginRequest): Promise<ApiResponse<any>> {
+  public async login(loginData: LoginRequest): Promise<ApiResponse<LoginResponse>> {
     try {
-      const response = await this.httpClient.post<any>('/api/Auth/login', loginData);
+      const response = await this.httpClient.post<LoginResponse>('/api/Auth/login', loginData);
       
       // If login is successful and returns a token, store it
-      if (response.data && response.data.token) {
-        this.httpClient.setToken(response.data.token);
+      if (response.data && (response.data.token || response.data.accessToken)) {
+        const token = response.data.token || response.data.accessToken!;
+        this.httpClient.setToken(token);
       }
       
       return response;
@@ -33,9 +34,15 @@ export class AuthService {
    * @param registerData - User registration data
    * @returns Promise with registration response
    */
-  public async register(registerData: RegisterUserRequest): Promise<ApiResponse<any>> {
+  public async register(registerData: RegisterUserRequest): Promise<ApiResponse<RegisterResponse>> {
     try {
-      const response = await this.httpClient.post<any>('/api/Auth/register', registerData);
+      const response = await this.httpClient.post<RegisterResponse>('/api/Auth/register', registerData);
+      
+      // If registration is successful and returns a token, store it
+      if (response.data && response.data.token) {
+        this.httpClient.setToken(response.data.token);
+      }
+      
       return response;
     } catch (error) {
       throw new Error(`Registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);

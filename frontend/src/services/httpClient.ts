@@ -1,11 +1,15 @@
-import { ApiResponse } from './types';
+import type { ApiResponse } from './types';
+import { API_BASE_URL, API_TIMEOUT } from '../config/env';
+import { devUtils } from '../config/development';
 
 export class HttpClient {
   private baseURL: string;
   private token: string | null = null;
+  private timeout: number;
 
-  constructor(baseURL: string = 'http://localhost:5000') {
-    this.baseURL = baseURL;
+  constructor(baseURL?: string) {
+    this.baseURL = baseURL || API_BASE_URL;
+    this.timeout = API_TIMEOUT;
     this.loadTokenFromStorage();
   }
 
@@ -26,6 +30,11 @@ export class HttpClient {
   private getHeaders(): HeadersInit {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      // CORS headers
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     };
 
     if (this.token) {
@@ -42,10 +51,23 @@ export class HttpClient {
       let errorMessage = `HTTP Error: ${status}`;
       try {
         const errorData = await response.json();
-        errorMessage = errorData.message || errorData.error || errorMessage;
+        errorMessage = errorData.message || errorData.error || errorData.title || errorMessage;
       } catch {
         errorMessage = response.statusText || errorMessage;
       }
+      
+      // Handle specific HTTP status codes
+      if (status === 401) {
+        this.clearToken();
+        errorMessage = 'Sessão expirada. Faça login novamente.';
+      } else if (status === 403) {
+        errorMessage = 'Acesso negado.';
+      } else if (status === 404) {
+        errorMessage = 'Recurso não encontrado.';
+      } else if (status >= 500) {
+        errorMessage = 'Erro interno do servidor. Tente novamente mais tarde.';
+      }
+      
       throw new Error(errorMessage);
     }
 
@@ -64,6 +86,45 @@ export class HttpClient {
     };
   }
 
+  private async makeRequest<T>(url: string, options: RequestInit): Promise<ApiResponse<T>> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+    // Log request in development
+    devUtils.logNetworkRequest(options.method || 'GET', url, options.body);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+        mode: 'cors', // Enable CORS
+        credentials: 'omit', // Don't send cookies
+      });
+      
+      clearTimeout(timeoutId);
+      const result = await this.handleResponse<T>(response);
+      
+      // Log response in development
+      devUtils.logNetworkResponse(options.method || 'GET', url, response.status, result.data);
+      
+      return result;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      
+      // Log error in development
+      devUtils.log('Network request failed', { url, error: error instanceof Error ? error.message : error });
+      
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new Error('Tempo limite da requisição excedido');
+        }
+        throw error;
+      }
+      
+      throw new Error('Erro de conexão com o servidor');
+    }
+  }
+
   public async get<T>(endpoint: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
     let url = `${this.baseURL}${endpoint}`;
     
@@ -79,40 +140,32 @@ export class HttpClient {
       }
     }
 
-    const response = await fetch(url, {
+    return this.makeRequest<T>(url, {
       method: 'GET',
       headers: this.getHeaders(),
     });
-
-    return this.handleResponse<T>(response);
   }
 
   public async post<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
-    const response = await fetch(`${this.baseURL}${endpoint}`, {
+    return this.makeRequest<T>(`${this.baseURL}${endpoint}`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: data ? JSON.stringify(data) : undefined,
     });
-
-    return this.handleResponse<T>(response);
   }
 
   public async patch<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
-    const response = await fetch(`${this.baseURL}${endpoint}`, {
+    return this.makeRequest<T>(`${this.baseURL}${endpoint}`, {
       method: 'PATCH',
       headers: this.getHeaders(),
       body: data ? JSON.stringify(data) : undefined,
     });
-
-    return this.handleResponse<T>(response);
   }
 
   public async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
-    const response = await fetch(`${this.baseURL}${endpoint}`, {
+    return this.makeRequest<T>(`${this.baseURL}${endpoint}`, {
       method: 'DELETE',
       headers: this.getHeaders(),
     });
-
-    return this.handleResponse<T>(response);
   }
 }
