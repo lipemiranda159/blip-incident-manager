@@ -67,6 +67,11 @@ function AppContent() {
     return await incidentOperations.handleUpdateIncident(incidentId, { status: status as Incident['status'] });
   };
 
+  const handleAssignedToUpdate = async (incidentId: string, assignedToId: string | null) => {
+    const updateData: Partial<Incident> = assignedToId ? { assignedTo: user! } : { assignedTo: undefined };
+    return await incidentOperations.handleUpdateIncident(incidentId, updateData);
+  };
+
   if (!isAuthenticated || !user) {
     return <LoginForm onLoginSuccess={handleLoginSuccess} />;
   }
@@ -111,6 +116,7 @@ function AppContent() {
           onClose={incidentModal.closeModal}
           onStatusUpdate={handleStatusUpdate}
           onAddComment={incidentOperations.handleAddComment}
+          onAssignedToUpdate={handleAssignedToUpdate}
         />
       )}
 
