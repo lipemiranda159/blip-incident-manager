@@ -196,6 +196,24 @@ export const useIncidents = () => {
     return response.data;
   };
 
+  const refreshIncidents = async () => {
+    try {
+      const response = await apiClient.incidents.getIncidents({
+        pageNumber: 1,
+        pageSize: itemsPerPage
+      });
+      
+      if (response.data && response.data.items) {
+        const mappedIncidents = response.data.items.map(mapApiIncidentToIncident);
+        setAllIncidents(mappedIncidents);
+        setCurrentPage(response.data.currentPage);
+        setTotalPages(response.data.totalPages);
+      }
+    } catch (error) {
+      console.error('Failed to refresh incidents:', error);
+    }
+  };
+
   return {
     incidents,
     loading,
@@ -206,6 +224,7 @@ export const useIncidents = () => {
     addComment,
     getIncidentById,
     hasMore,
-    loadMoreIncidents
+    loadMoreIncidents,
+    refreshIncidents
   };
 };
