@@ -47,10 +47,14 @@ function AppContent() {
     console.log('Login successful:', userData);
   };
 
-  const handleIncidentClick = (incident: Incident) => {
-    const currentIncident = getIncidentById(incident.id);
-    if (currentIncident) {
-      incidentModal.openModal(currentIncident);
+  const handleIncidentClick = async (incident: Incident) => {
+    try {
+      const currentIncident = await getIncidentById(incident.id);
+      if (currentIncident) {
+        incidentModal.openModal(currentIncident);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar detalhes do incidente:', error);
     }
   };
 
@@ -58,8 +62,9 @@ function AppContent() {
     setShowCreateModal(true);
   };
 
-  const handleStatusUpdate = async (incidentId: string, status: Incident['status']) => {
-    return await incidentOperations.handleUpdateIncident(incidentId, { status });
+  const handleStatusUpdate = async (incidentId: string, status: string | null) => {
+    if (!status) return { success: false, error: 'Status inválido' };
+    return await incidentOperations.handleUpdateIncident(incidentId, { status: status as Incident['status'] });
   };
 
   if (!isAuthenticated || !user) {
