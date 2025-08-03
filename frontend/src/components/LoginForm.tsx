@@ -23,16 +23,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError('');
-    
+
     // Validate form
     if (!email || !password) {
       setLocalError('Por favor, preencha todos os campos');
       return;
     }
-    
+
     try {
       const success = await login(email, password);
-      
+
       if (success) {
         // Login successful - the AuthContext will handle state updates
         // and the App component will automatically redirect to the main screen
@@ -45,23 +45,23 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <BdsGrid 
-      direction="column" 
-      justify-content="center" 
-      align-items="center" 
+    <BdsGrid
+      direction="column"
+      justify-content="center"
+      align-items="center"
       padding="4"
       style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%)' }}
     >
-      <BdsGrid 
-        direction="column" 
-        gap="4" 
+      <BdsGrid
+        direction="column"
+        gap="4"
         padding="6"
-        style={{ 
-          maxWidth: '400px', 
-          width: '100%', 
-          backgroundColor: 'white', 
-          borderRadius: '12px', 
-          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)' 
+        style={{
+          maxWidth: '400px',
+          width: '100%',
+          backgroundColor: 'white',
+          borderRadius: '12px',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
         }}
       >
         {/* Header Section */}
@@ -119,9 +119,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 icon={showPassword ? 'eye-closed' : 'eye-open'}
                 onBdsClick={() => setShowPassword(!showPassword)}
                 disabled={isLoading}
-                style={{ 
-                  position: 'absolute', 
-                  right: '8px', 
+                style={{
+                  position: 'absolute',
+                  right: '8px',
                   zIndex: 1,
                   minWidth: 'auto',
                   padding: '4px'
@@ -145,45 +145,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
             variant="primary"
             size="medium"
             disabled={isLoading || !email || !password}
-            onBdsClick={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
+            onBdsClick={() => handleSubmit({ preventDefault: () => { } } as React.FormEvent)}
             style={{ width: '100%' }}
           >
             {isLoading ? 'Entrando...' : 'Entrar'}
           </BdsButton>
-        </BdsGrid>
-
-        {/* Test Accounts Section */}
-        <BdsGrid 
-          direction="column" 
-          gap="2" 
-          padding="3"
-          style={{ 
-            backgroundColor: '#eff6ff', 
-            borderRadius: '8px',
-            border: '1px solid #dbeafe'
-          }}
-        >
-          <BdsTypo variant="fs-16" bold="semi-bold" color="primary">
-            Contas de Teste:
-          </BdsTypo>
-          <BdsGrid direction="column" gap="2">
-            <BdsGrid direction="column" gap="1">
-              <BdsTypo variant="fs-14" bold="semi-bold">
-                Solicitante:
-              </BdsTypo>
-              <BdsTypo variant="fs-14" color="content-secondary">
-                joao@empresa.com / 123456
-              </BdsTypo>
-            </BdsGrid>
-            <BdsGrid direction="column" gap="1">
-              <BdsTypo variant="fs-14" bold="semi-bold">
-                Atendente:
-              </BdsTypo>
-              <BdsTypo variant="fs-14" color="content-secondary">
-                maria@empresa.com / 123456
-              </BdsTypo>
-            </BdsGrid>
-          </BdsGrid>
         </BdsGrid>
       </BdsGrid>
     </BdsGrid>
