@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { BdsGrid } from 'blip-ds/dist/blip-ds-react/components';
+import { BdsGrid, BdsButton, BdsIcon } from 'blip-ds/dist/blip-ds-react/components';
 import Header from './components/Headers';
 import Dashboard from './components/Dashboard';
 import { IncidentFilters } from './components/IncidentFilters';
 import { IncidentGrid } from './components/IncidentGrid';
+import { IncidentTable } from './components/IncidentTable';
 import { CreateIncidentModal } from './components/CreateIncidentModal';
 import { useIncidents } from './hooks/useIncidents';
 import { useIncidentModal } from './hooks/useIncidentModal';
@@ -34,6 +35,7 @@ function AppContent() {
   // Modal management
   const incidentModal = useIncidentModal();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   // Incident operations with error handling
   const incidentOperations = useIncidentOperations({
     createIncident,
@@ -95,28 +97,29 @@ function AppContent() {
 
   return (
     <BdsGrid direction="column" height="100vh" className="bg-surface-1">
-      <Header 
-        onCreateIncident={handleCreateIncident} 
-        user={user} 
-        onLogout={logout} 
+      <Header
+        onCreateIncident={handleCreateIncident}
+        user={user}
+        onLogout={logout}
       />
-      
-      <BdsGrid 
-        direction="column" 
-        gap="4" 
-        padding="4" 
-        xxs="12" 
-        lg="10" 
+
+      <BdsGrid
+        direction="column"
+        gap="4"
+        padding="4"
+        xxs="12"
+        lg="10"
       >
         {/* <Dashboard /> */}
-        
+
         <IncidentFilters
           filters={filters}
           onFiltersChange={setFilters}
           totalItems={incidents.length}
         />
 
-        <IncidentGrid
+
+        <IncidentTable
           incidents={incidents}
           loading={loading}
           hasMore={hasMore}
