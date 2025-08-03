@@ -108,7 +108,6 @@ export const useIncidents = () => {
         description: data.description,
         priority: data.priority,
         category: 'General', // Default category
-        createdBy: data.createdBy.id
       };
       
       const response = await apiClient.incidents.createIncident(createRequest);
@@ -192,8 +191,9 @@ export const useIncidents = () => {
     }
   };
 
-  const getIncidentById = (id: string): Incident | null => {
-    return allIncidents.find((incident) => incident.id === id) ?? null;
+  const getIncidentById = async (id: string): Promise<IncidentDto | null> => {
+    const response = await apiClient.incidents.getIncidentById(id);
+    return response.data;
   };
 
   return {

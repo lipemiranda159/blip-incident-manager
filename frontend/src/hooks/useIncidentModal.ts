@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import type { Incident } from '../types';
+import type { IncidentDto } from '../services';
 
 export const useIncidentModal = () => {
-  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  const [selectedIncident, setSelectedIncident] = useState<IncidentDto | null>(null);
 
-  const openModal = (incident: Incident) => {
+  const openModal = (incident: IncidentDto) => {
     setSelectedIncident(incident);
   };
 
