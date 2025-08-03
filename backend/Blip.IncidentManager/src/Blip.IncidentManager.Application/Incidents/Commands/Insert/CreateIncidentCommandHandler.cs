@@ -2,16 +2,18 @@ using MediatR;
 using Blip.IncidentManager.Domain.Entities;
 using Blip.IncidentManager.Application.Interfaces;
 using Blip.IncidentManager.Application.Auth;
+using AutoMapper;
 
 namespace Blip.IncidentManager.Application.Incidents.Commands.Insert;
 
 public class CreateIncidentCommandHandler : IRequestHandler<CreateIncidentCommand, IncidentDto>
 {
     private readonly IUnitOfWork _unitOfWork;
-
-    public CreateIncidentCommandHandler(IUnitOfWork unitOfWork)
+    private readonly IMapper _mapper;
+    public CreateIncidentCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<IncidentDto> Handle(CreateIncidentCommand request, CancellationToken cancellationToken)
@@ -30,13 +32,8 @@ public class CreateIncidentCommandHandler : IRequestHandler<CreateIncidentComman
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var user = await _unitOfWork.GetUsers().GetByIdAsync(request.CreatedBy);
-        var userDto = new UserDto
-        {
-            Id = user.Id,
-            Name = user.Name,
-            Email = user.Email
-        };
+        newIncident.CreatedBy = user!;
 
-        return new IncidentDto(newIncident.Id, newIncident.Title, newIncident.Description, newIncident.CreatedAt, userDto);
+        return _mapper.Map<IncidentDto>(newIncident);
     }
 }
