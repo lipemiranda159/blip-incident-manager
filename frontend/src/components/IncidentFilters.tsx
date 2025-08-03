@@ -51,6 +51,7 @@ export const IncidentFilters: React.FC<IncidentFiltersProps> = ({
             <option value="">Todos os status</option>
             <option value="Aberto">Aberto</option>
             <option value="Em andamento">Em andamento</option>
+            <option value="Pendent">Pendent</option>
             <option value="Resolvido">Resolvido</option>
             <option value="Cancelado">Cancelado</option>
           </select>
