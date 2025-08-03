@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 import type { Incident, User } from '../types';
+import type { IncidentDto } from '../services/types';
 
 interface UseIncidentOperationsProps {
   createIncident: (data: Omit<Incident, 'id' | 'createdAt' | 'updatedAt' | 'comments'>) => Promise<Incident>;
   updateIncident: (id: string, updates: Partial<Incident>) => Promise<void>;
   addComment: (incidentId: string, content: string, author: User) => Promise<void>;
-  getIncidentById: (id: string) => Incident | null;
+  getIncidentById: (id: string) => Promise<IncidentDto | null>;
 }
 
 export const useIncidentOperations = ({
@@ -53,9 +54,9 @@ export const useIncidentOperations = ({
     }
   }, [addComment]);
 
-  const handleGetIncident = useCallback((id: string) => {
+  const handleGetIncident = useCallback(async (id: string) => {
     try {
-      return getIncidentById(id);
+      return await getIncidentById(id);
     } catch (error) {
       console.error('Failed to get incident:', error);
       return null;
