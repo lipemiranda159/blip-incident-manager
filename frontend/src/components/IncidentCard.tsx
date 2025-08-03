@@ -82,7 +82,12 @@ export const IncidentCard = forwardRef<HTMLDivElement, IncidentCardProps>(
                   Por: {incident.createdBy.name}
                 </BdsTypo>
                 <BdsTypo variant="fs-12" color="content-secondary">
-                  {new Date(incident.createdAt).toLocaleDateString('pt-BR')}
+                  {(() => {
+                    const dateStr = incident.createdAt.toISOString();
+                    return new Date(dateStr).toLocaleDateString('pt-BR', {
+                      timeZone: 'America/Sao_Paulo'
+                    });
+                  })()}
                 </BdsTypo>
                 {incident.assignedTo && (
                   <BdsTypo variant="fs-12" color="primary">
