@@ -30,9 +30,9 @@ namespace Blip.IncidentManager.Application.Incidents.Commands.Update
             incident.Status = SetIfNotNullOrWhiteSpace(incident.Status, request.Status);
             incident.Priority = SetIfNotNullOrWhiteSpace(incident.Priority, request.Priority);
             
-            if (request.AssignedUserId.HasValue)
+            if (request.AssignedUserId.HasValue || incident.AssignedToId.HasValue)
             {
-                incident.AssignedToId = request.AssignedUserId.Value;
+                incident.AssignedToId = request.AssignedUserId ?? null;
             }
 
             _unitOfWork.GetIncidents().Update(incident);
