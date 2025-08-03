@@ -17,12 +17,13 @@ import {
 import { useState } from 'react'
 import type { Incident, User as UserType } from '../types'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
+import type { IncidentDto } from '../services'
 
 interface IncidentModalProps {
-  incident: Incident
+  incident: IncidentDto
   currentUser: UserType
   onClose: () => void
-  onStatusUpdate: (incidentId: string, status: Incident['status']) => void
+  onStatusUpdate: (incidentId: string, status: IncidentDto['status']) => void
   onAddComment: (incidentId: string, content: string, author: UserType) => void
 }
 
@@ -36,26 +37,44 @@ export const IncidentModal = ({
   const [newComment, setNewComment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Use scroll lock properly - it will be cleaned up when component unmounts
+  
   useBodyScrollLock(true)
 
-  const formatDate = (date: string) =>
-    new Date(date).toLocaleString('pt-BR', {
+  const formatDate = (date: string) => {
+    // Se a data não termina com 'Z', assumimos que é UTC e adicionamos 'Z'
+    const utcDate = date.endsWith('Z') ? date : date + 'Z';
+    return new Date(utcDate).toLocaleString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
-    })
+      minute: '2-digit',
+      timeZone: 'America/Sao_Paulo'
+    });
+  }
 
   const handleStatusChange = (e: CustomEvent) => {
-    onStatusUpdate(incident.id, e.detail.value as Incident['status'])
+    onStatusUpdate(incident.id, e.detail.value as IncidentDto['status'])
   }
 
   const handleAddComment = async () => {
     if (!newComment.trim()) return
     setIsSubmitting(true)
     try {
+      incident.comments?.push({
+        id: Date.now().toString(),
+        content: newComment.trim(),
+        createdAt: new Date().toISOString(),
+        author: {
+          name: currentUser.name,
+          id: currentUser.id,
+          email: currentUser.email,
+          type: currentUser.type,
+          avatar: ""
+        },
+        authorId: currentUser.id,
+        incidentId: incident.id
+      });
       await onAddComment(incident.id, newComment.trim(), currentUser)
       setNewComment('')
     } catch (error) {
@@ -127,7 +146,7 @@ export const IncidentModal = ({
               <BdsGrid direction="column">
                 <BdsTypo variant="fs-12" color="content-secondary">Criado em</BdsTypo>
                 <BdsTypo variant="fs-14" bold="semi-bold">
-                  {formatDate(incident.createdAt.toDateString())}
+                  {formatDate(incident.createdAt)}
                 </BdsTypo>
               </BdsGrid>
             </BdsGrid>
@@ -178,7 +197,7 @@ export const IncidentModal = ({
               Comentários
             </BdsTypo>
             <BdsAccordionGroup collapse="multiple">
-              {incident.comments.map((comment) => (
+              {incident.comments?.map((comment) => (
                 <BdsAccordion key={comment.id}>
                   <BdsAccordionHeader icon='avatar-user' accordion-title={comment.author.name}>
 
@@ -254,7 +273,7 @@ export const IncidentModal = ({
               <BdsGrid direction="row" gap="1" align-items="center">
                 <BdsIcon name="calendar" size="small" />
                 <BdsTypo variant="fs-14">
-                  {formatDate(incident.updatedAt.toString())}
+                  {formatDate(incident.updatedAt)}
                 </BdsTypo>
               </BdsGrid>
             </BdsGrid>
