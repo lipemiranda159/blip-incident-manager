@@ -16,16 +16,12 @@ import type { Incident } from '../types';
 interface IncidentTableProps {
   incidents: Incident[];
   loading: boolean;
-  hasMore: boolean;
-  onLoadMore: () => void;
   onIncidentClick: (incident: Incident) => void;
 }
 
 export const IncidentTable = ({
   incidents,
   loading,
-  hasMore,
-  onLoadMore,
   onIncidentClick
 }: IncidentTableProps) => {
   const getStatusColor = (status: Incident['status']) => {
@@ -114,7 +110,7 @@ export const IncidentTable = ({
             <BdsTableRow key={incident.id}>
               <BdsTableCell>
                 <BdsTypo variant="fs-12">
-                  {incident.id}
+                  INCO-{incident.id.split('-')[0].toLocaleUpperCase()}
                 </BdsTypo>
               </BdsTableCell>
               <BdsTableCell>
@@ -166,15 +162,11 @@ export const IncidentTable = ({
         </BdsTableBody>
       </BdsTable>
 
-      {hasMore && (
+      {loading && (
         <BdsGrid direction="row" justify-content="center" padding="4">
-          <BdsButton
-            variant="secondary"
-            onClick={onLoadMore}
-            disabled={loading}
-          >
-            {loading ? 'Carregando...' : 'Carregar mais incidentes'}
-          </BdsButton>
+          <BdsTypo variant="fs-14" color="content-secondary">
+            Carregando...
+          </BdsTypo>
         </BdsGrid>
       )}
     </BdsGrid>

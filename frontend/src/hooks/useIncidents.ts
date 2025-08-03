@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { type Incident, type Filter } from '../types';
 import { apiClient, type IncidentDto, type CreateIncidentRequest, type UpdateIncidentRequest } from '../services';
 import { useIncidentFiltering } from './useIncidentFiltering';
-import { usePagination } from './usePagination';
 
 
 
@@ -84,21 +83,44 @@ export const useIncidents = () => {
   // Filter incidents based on current filters
   const filteredIncidents = useIncidentFiltering(allIncidents, filters);
 
-  // Handle pagination of filtered incidents
-  const {
-    paginatedItems: incidents,
-    hasMore: localHasMore,
-    loading: paginationLoading,
-    loadMore: loadMoreIncidents
-  } = usePagination({
-    items: filteredIncidents,
-    itemsPerPage,
-    resetTrigger: filters
-  });
+  // Load specific page from API
+  const loadPage = async (page: number, pageSize: number = itemsPerPage) => {
+    setInitialLoading(true);
+    try {
+      const response = await apiClient.incidents.getIncidents({
+        pageNumber: page,
+        pageSize: pageSize
+      });
+      
+      if (response.data && response.data.items) {
+        const incidents = response.data.items.map(mapApiIncidentToIncident);
+        setAllIncidents(incidents); // Replace all incidents with current page
+        setCurrentPage(response.data.currentPage);
+        setTotalPages(response.data.totalPages);
+        // Note: itemsPerPage is updated via the pageSize parameter
+      }
+    } catch (error) {
+      console.error('Failed to load page:', error);
+    } finally {
+      setInitialLoading(false);
+    }
+  };
 
-  // Check if there are more pages from API
-  const hasMore = localHasMore || currentPage < totalPages;
-  const loading = initialLoading || paginationLoading;
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    if (page !== currentPage && page >= 1 && page <= totalPages) {
+      loadPage(page);
+    }
+  };
+
+  // Handle items per page change
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    if (newItemsPerPage !== itemsPerPage) {
+      loadPage(1, newItemsPerPage); // Reset to first page with new page size
+    }
+  };
+  
+  // Note: loading state is now returned directly as initialLoading
 
   const createIncident = async (data: Omit<Incident, 'id' | 'createdAt' | 'updatedAt' | 'comments'>) => {
     setInitialLoading(true);
@@ -215,16 +237,20 @@ export const useIncidents = () => {
   };
 
   return {
-    incidents,
-    loading,
+    incidents: filteredIncidents,
+    loading: initialLoading,
     filters,
     setFilters,
     createIncident,
     updateIncident,
     addComment,
     getIncidentById,
-    hasMore,
-    loadMoreIncidents,
+    currentPage,
+    totalPages,
+    totalItems: filteredIncidents.length, // Note: This should ideally come from API response
+    itemsPerPage,
+    onPageChange: handlePageChange,
+    onItemsPerPageChange: handleItemsPerPageChange,
     refreshIncidents
   };
 };

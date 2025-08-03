@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard';
 import { IncidentFilters } from './components/IncidentFilters';
 import { IncidentGrid } from './components/IncidentGrid';
 import { IncidentTable } from './components/IncidentTable';
+import { Pagination } from './components/Pagination';
 import { CreateIncidentModal } from './components/CreateIncidentModal';
 import { useIncidents } from './hooks/useIncidents';
 import { useIncidentModal } from './hooks/useIncidentModal';
@@ -23,8 +24,12 @@ function AppContent() {
     loading,
     filters,
     setFilters,
-    hasMore,
-    loadMoreIncidents,
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    onPageChange,
+    onItemsPerPageChange,
     createIncident,
     updateIncident,
     addComment,
@@ -35,7 +40,6 @@ function AppContent() {
   // Modal management
   const incidentModal = useIncidentModal();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   // Incident operations with error handling
   const incidentOperations = useIncidentOperations({
     createIncident,
@@ -55,6 +59,8 @@ function AppContent() {
       const currentIncident = await getIncidentById(incident.id);
       if (currentIncident) {
         incidentModal.openModal(currentIncident);
+      } else {
+        console.error('Incidente não encontrado:', incident.id);
       }
     } catch (error) {
       console.error('Erro ao carregar detalhes do incidente:', error);
@@ -67,28 +73,40 @@ function AppContent() {
 
   const handleStatusUpdate = async (incidentId: string, status: string | null) => {
     if (!status) return { success: false, error: 'Status inválido' };
-    const result = await incidentOperations.handleUpdateIncident(incidentId, { status: status as Incident['status'] });
-    if (result.success) {
-      await refreshIncidents(); // Refresh incidents list after successful update
+    try {
+      const result = await incidentOperations.handleUpdateIncident(incidentId, { status: status as Incident['status'] });
+      // Note: Removed automatic refresh to prevent DOM errors
+      // User can manually refresh if needed
+      return result;
+    } catch (error) {
+      console.error('Erro ao atualizar status:', error);
+      return { success: false, error: 'Erro ao atualizar status' };
     }
-    return result;
   };
 
   const handleAssignedToUpdate = async (incidentId: string, assignedToId: string | null) => {
-    const updateData: Partial<Incident> = assignedToId ? { assignedTo: user! } : { assignedTo: undefined };
-    const result = await incidentOperations.handleUpdateIncident(incidentId, updateData);
-    if (result.success) {
-      await refreshIncidents(); // Refresh incidents list after successful update
+    try {
+      const updateData: Partial<Incident> = assignedToId ? { assignedTo: user! } : { assignedTo: undefined };
+      const result = await incidentOperations.handleUpdateIncident(incidentId, updateData);
+      // Note: Removed automatic refresh to prevent DOM errors
+      // User can manually refresh if needed
+      return result;
+    } catch (error) {
+      console.error('Erro ao atualizar atribuição:', error);
+      return { success: false, error: 'Erro ao atualizar atribuição' };
     }
-    return result;
   };
 
   const handleAddComment = async (incidentId: string, content: string, author: any) => {
-    const result = await incidentOperations.handleAddComment(incidentId, content, author);
-    if (result.success) {
-      await refreshIncidents(); // Refresh incidents list after successful comment addition
+    try {
+      const result = await incidentOperations.handleAddComment(incidentId, content, author);
+      // Note: Removed automatic refresh to prevent DOM errors
+      // User can manually refresh if needed
+      return result;
+    } catch (error) {
+      console.error('Erro ao adicionar comentário:', error);
+      return { success: false, error: 'Erro ao adicionar comentário' };
     }
-    return result;
   };
 
   if (!isAuthenticated || !user) {
@@ -118,13 +136,34 @@ function AppContent() {
           totalItems={incidents.length}
         />
 
+        {/* Manual Refresh Button */}
+        <BdsGrid direction="row" justify-content="flex-end" gap="2">
+          <BdsButton
+            variant="secondary"
+            size="short"
+            onClick={refreshIncidents}
+            disabled={loading}
+          >
+            <BdsIcon name="refresh" size="small" />
+            Atualizar Lista
+          </BdsButton>
+        </BdsGrid>
 
         <IncidentTable
           incidents={incidents}
           loading={loading}
-          hasMore={hasMore}
-          onLoadMore={loadMoreIncidents}
           onIncidentClick={handleIncidentClick}
+        />
+
+        {/* Pagination Component */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          onPageChange={onPageChange}
+          onItemsPerPageChange={onItemsPerPageChange}
+          loading={loading}
         />
       </BdsGrid>
 
