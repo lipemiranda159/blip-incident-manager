@@ -27,7 +27,8 @@ function AppContent() {
     createIncident,
     updateIncident,
     addComment,
-    getIncidentById
+    getIncidentById,
+    refreshIncidents
   } = useIncidents();
 
   // Modal management
@@ -64,12 +65,28 @@ function AppContent() {
 
   const handleStatusUpdate = async (incidentId: string, status: string | null) => {
     if (!status) return { success: false, error: 'Status inválido' };
-    return await incidentOperations.handleUpdateIncident(incidentId, { status: status as Incident['status'] });
+    const result = await incidentOperations.handleUpdateIncident(incidentId, { status: status as Incident['status'] });
+    if (result.success) {
+      await refreshIncidents(); // Refresh incidents list after successful update
+    }
+    return result;
   };
 
   const handleAssignedToUpdate = async (incidentId: string, assignedToId: string | null) => {
     const updateData: Partial<Incident> = assignedToId ? { assignedTo: user! } : { assignedTo: undefined };
-    return await incidentOperations.handleUpdateIncident(incidentId, updateData);
+    const result = await incidentOperations.handleUpdateIncident(incidentId, updateData);
+    if (result.success) {
+      await refreshIncidents(); // Refresh incidents list after successful update
+    }
+    return result;
+  };
+
+  const handleAddComment = async (incidentId: string, content: string, author: any) => {
+    const result = await incidentOperations.handleAddComment(incidentId, content, author);
+    if (result.success) {
+      await refreshIncidents(); // Refresh incidents list after successful comment addition
+    }
+    return result;
   };
 
   if (!isAuthenticated || !user) {
@@ -91,7 +108,7 @@ function AppContent() {
         xxs="12" 
         lg="10" 
       >
-        <Dashboard />
+        {/* <Dashboard /> */}
         
         <IncidentFilters
           filters={filters}
@@ -115,7 +132,7 @@ function AppContent() {
           currentUser={user}
           onClose={incidentModal.closeModal}
           onStatusUpdate={handleStatusUpdate}
-          onAddComment={incidentOperations.handleAddComment}
+          onAddComment={handleAddComment}
           onAssignedToUpdate={handleAssignedToUpdate}
         />
       )}
