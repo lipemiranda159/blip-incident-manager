@@ -95,7 +95,6 @@ export const IncidentCard = forwardRef<HTMLDivElement, IncidentCardProps>(
                   </BdsTypo>
                 )}
               </BdsGrid>
-
             </BdsGrid>
           </BdsCardBody>
         </BdsCard>
