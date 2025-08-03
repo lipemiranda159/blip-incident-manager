@@ -1,6 +1,15 @@
 import React from 'react';
 import type { Filter as FilterType } from '../types';
-import { BdsIcon } from 'blip-ds/dist/blip-ds-react/components';
+import {
+  BdsIcon,
+  BdsGrid,
+  BdsInput,
+  BdsSelect,
+  BdsSelectOption,
+  BdsButton,
+  BdsTypo,
+  BdsChipTag
+} from 'blip-ds/dist/blip-ds-react/components';
 
 interface IncidentFiltersProps {
   filters: FilterType;
@@ -27,103 +36,100 @@ export const IncidentFilters: React.FC<IncidentFiltersProps> = ({
   const hasActiveFilters = Object.values(filters).some(value => value);
 
   return (
-    <div className="bg-white border-b border-gray-200 p-4 sm:p-6">
-      <div className="flex flex-col lg:flex-row gap-4">
-        <div className="flex-1">
-          <div className="relative">
-            <BdsIcon name="search" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Buscar por título ou descrição..."
-              value={filters.search || ''}
-              onChange={(e) => updateFilter('search', e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-        </div>
+    <BdsGrid direction="column" gap="3" padding="4" style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb' }}>
+      <BdsGrid direction="row" gap="3" flex-wrap="wrap" align-items="center">
+        <BdsGrid direction="column" xxs="12" md="6">
+          <BdsInput
+            placeholder="Buscar por título ou descrição..."
+            value={filters.search || ''}
+            onBdsChange={(e: CustomEvent) => updateFilter('search', e.detail.value || '')}
+            icon="search"
+          />
+        </BdsGrid>
 
-        <div className="flex flex-wrap gap-4">
-          <select
-            value={filters.status || ''}
-            onChange={(e) => updateFilter('status', e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-          >
-            <option value="">Todos os status</option>
-            <option value="Aberto">Aberto</option>
-            <option value="Em andamento">Em andamento</option>
-            <option value="Pendent">Pendent</option>
-            <option value="Resolvido">Resolvido</option>
-            <option value="Cancelado">Cancelado</option>
-          </select>
+        <BdsGrid direction="row" gap="2" flex-wrap="wrap">
+          <BdsSelect value={filters.status || ''} onBdsChange={(e: CustomEvent) => updateFilter('status', e.detail.value || '')}>
+            <BdsSelectOption value="">Todos os status</BdsSelectOption>
+            <BdsSelectOption value="Aberto">Aberto</BdsSelectOption>
+            <BdsSelectOption value="Em andamento">Em andamento</BdsSelectOption>
+            <BdsSelectOption value="Pendente">Pendente</BdsSelectOption>
+            <BdsSelectOption value="Resolvido">Resolvido</BdsSelectOption>
+            <BdsSelectOption value="Cancelado">Cancelado</BdsSelectOption>
+          </BdsSelect>
 
-          <select
-            value={filters.priority || ''}
-            onChange={(e) => updateFilter('priority', e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-          >
-            <option value="">Todas as prioridades</option>
-            <option value="Baixa">Baixa</option>
-            <option value="Média">Média</option>
-            <option value="Alta">Alta</option>
-            <option value="Crítica">Crítica</option>
-          </select>
+          <BdsSelect value={filters.priority || ''} onBdsChange={(e: CustomEvent) => updateFilter('priority', e.detail.value || '')}>
+            <BdsSelectOption value="">Todas as prioridades</BdsSelectOption>
+            <BdsSelectOption value="Baixa">Baixa</BdsSelectOption>
+            <BdsSelectOption value="Média">Média</BdsSelectOption>
+            <BdsSelectOption value="Alta">Alta</BdsSelectOption>
+            <BdsSelectOption value="Crítica">Crítica</BdsSelectOption>
+          </BdsSelect>
 
-          <div className="flex gap-2">
-            <input
+          <BdsGrid direction="row" gap="1">
+            <BdsInput
               type="date"
               value={filters.dateFrom || ''}
-              onChange={(e) => updateFilter('dateFrom', e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-              placeholder="De"
+              onBdsChange={(e: CustomEvent) => updateFilter('dateFrom', e.detail.value || '')}
+              placeholder="Data inicial"
             />
-            <input
+            <BdsInput
               type="date"
               value={filters.dateTo || ''}
-              onChange={(e) => updateFilter('dateTo', e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-              placeholder="Até"
+              onBdsChange={(e: CustomEvent) => updateFilter('dateTo', e.detail.value || '')}
+              placeholder="Data final"
             />
-          </div>
+          </BdsGrid>
 
           {hasActiveFilters && (
-            <button
-              onClick={clearFilters}
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+            <BdsButton
+              variant="ghost"
+              size="short"
+              onBdsClick={clearFilters}
+              icon="close"
             >
-              <BdsIcon name='close' className="w-4 h-4" />
               Limpar
-            </button>
+            </BdsButton>
           )}
-        </div>
-      </div>
+        </BdsGrid>
+      </BdsGrid>
 
-      <div className="flex items-center justify-between mt-4">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <BdsIcon name='filter' className="w-4 h-4" />
-          <span>{totalItems} incidente{totalItems !== 1 ? 's' : ''} encontrado{totalItems !== 1 ? 's' : ''}</span>
-        </div>
+      <BdsGrid direction="row" justify-content="space-between" align-items="center">
+        <BdsGrid direction="row" gap="1" align-items="center">
+          <BdsIcon name="filter" size="small" />
+          <BdsTypo variant="fs-14" color="content-secondary">
+            {totalItems} incidente{totalItems !== 1 ? 's' : ''} encontrado{totalItems !== 1 ? 's' : ''}
+          </BdsTypo>
+        </BdsGrid>
 
         {hasActiveFilters && (
-          <div className="flex flex-wrap gap-2">
+          <BdsGrid direction="row" gap="1" flex-wrap="wrap">
             {filters.status && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+              <BdsChipTag color="info">
                 Status: {filters.status}
-                <button onClick={() => updateFilter('status', '')}>
-                  <BdsIcon name='close' className="w-3 h-3" />
-                </button>
-              </span>
+                <BdsButton 
+                  variant="ghost" 
+                  size="short" 
+                  icon="close" 
+                  onBdsClick={() => updateFilter('status', '')}
+                  style={{ marginLeft: '4px', minWidth: 'auto', padding: '2px' }}
+                />
+              </BdsChipTag>
             )}
             {filters.priority && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+              <BdsChipTag color="success">
                 Prioridade: {filters.priority}
-                <button onClick={() => updateFilter('priority', '')}>
-                  <BdsIcon name='close' className="w-3 h-3" />
-                </button>
-              </span>
+                <BdsButton 
+                  variant="ghost" 
+                  size="short" 
+                  icon="close" 
+                  onBdsClick={() => updateFilter('priority', '')}
+                  style={{ marginLeft: '4px', minWidth: 'auto', padding: '2px' }}
+                />
+              </BdsChipTag>
             )}
-          </div>
+          </BdsGrid>
         )}
-      </div>
-    </div>
+      </BdsGrid>
+    </BdsGrid>
   );
 };
