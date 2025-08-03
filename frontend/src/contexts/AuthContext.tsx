@@ -28,10 +28,10 @@ type AuthAction =
 // Helper function to map API user data to local User type
 const mapApiUserToUser = (apiUser: any): User => {
   return {
-    id: apiUser.id || apiUser.userId || '1',
-    name: apiUser.unique_name || apiUser.userName || 'Usuário',
-    email: apiUser.email || '',
-    type: apiUser.type || 'solicitante',
+    id: apiUser.nameid,
+    name: apiUser.unique_name,
+    email: apiUser.email,
+    type: apiUser.type,
     avatar: apiUser.avatar || 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
   };
 };
