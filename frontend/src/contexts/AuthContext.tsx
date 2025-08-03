@@ -29,7 +29,7 @@ type AuthAction =
 const mapApiUserToUser = (apiUser: any): User => {
   return {
     id: apiUser.id || apiUser.userId || '1',
-    name: apiUser.name || apiUser.userName || 'Usuário',
+    name: apiUser.unique_name || apiUser.userName || 'Usuário',
     email: apiUser.email || '',
     type: apiUser.type || 'solicitante',
     avatar: apiUser.avatar || 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
@@ -133,6 +133,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     restoreSession();
   }, []);
 
+  const parseJwt = (token: string) => {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+  
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      console.error('Token inválido', e);
+      return null;
+    }
+  }
+
   // Login function
   const login = async (email: string, password: string): Promise<boolean> => {
     dispatch({ type: 'LOGIN_START' });
@@ -151,7 +166,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
 
         // Map API response to User type
-        const user = mapApiUserToUser(response.data.user || response.data);
+        const jwtData = parseJwt(token);
+        const user = mapApiUserToUser(jwtData);
         
         // Store user data and token in localStorage for session persistence
         localStorage.setItem('user', JSON.stringify(user));
