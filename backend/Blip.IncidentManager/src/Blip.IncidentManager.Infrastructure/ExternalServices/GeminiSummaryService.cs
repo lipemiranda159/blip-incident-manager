@@ -36,7 +36,7 @@ namespace Blip.IncidentManager.Infrastructure.ExternalServices
             }
             };
 
-            var url = $"{_appConfig.Gemini.ApiUrl}?Key={_appConfig.Gemini.ApiKey}";
+            var url = $"{_appConfig.AiConfig.ApiUrl}?Key={_appConfig.AiConfig.ApiKey}";
 
             var jsonRequest = JsonSerializer.Serialize(request);
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url)
