@@ -13,7 +13,7 @@ namespace Blip.IncidentManager.Infrastructure.Extensions
         public static IServiceCollection AddIncidentManagerInfrastructure(this IServiceCollection services, AppConfig appConfig)
         {
             services.AddSingleton<IJwtTokenGeneratorService, JwtTokenGeneratorService>();
-            services.AddHttpClient<IIncidentSummaryAiService, GeminiSummaryService>();
+            services.AddHttpClient<IIncidentSummaryAiService, HuggingFaceSummaryService>();
             services.AddScoped<IPasswordHasher, IdentityPasswordHasher>();
             return services;
         }
