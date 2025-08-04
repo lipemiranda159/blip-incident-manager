@@ -38,6 +38,7 @@ export interface IncidentSummaryDto {
 export interface IncidentDtoPagedResult {
   currentPage: number;
   totalPages: number;
+  totalCount: number;
   items: IncidentDto[] | null;
 }
 

@@ -51,8 +51,8 @@ export const useIncidents = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  
-  const itemsPerPage = 10;
+  const [totalItems, setTotalItems] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Load initial data
   useEffect(() => {
@@ -69,6 +69,7 @@ export const useIncidents = () => {
           setAllIncidents(mappedIncidents);
           setCurrentPage(response.data.currentPage);
           setTotalPages(response.data.totalPages);
+          setTotalItems(response.data.totalCount || 0);
         }
       } catch (error) {
         console.error('Failed to load incidents:', error);
@@ -97,7 +98,8 @@ export const useIncidents = () => {
         setAllIncidents(incidents); // Replace all incidents with current page
         setCurrentPage(response.data.currentPage);
         setTotalPages(response.data.totalPages);
-        // Note: itemsPerPage is updated via the pageSize parameter
+        setTotalItems(response.data.totalCount || 0);
+        setItemsPerPage(pageSize);
       }
     } catch (error) {
       console.error('Failed to load page:', error);
@@ -230,6 +232,7 @@ export const useIncidents = () => {
         setAllIncidents(mappedIncidents);
         setCurrentPage(response.data.currentPage);
         setTotalPages(response.data.totalPages);
+        setTotalItems(response.data.totalCount || 0);
       }
     } catch (error) {
       console.error('Failed to refresh incidents:', error);
@@ -247,7 +250,7 @@ export const useIncidents = () => {
     getIncidentById,
     currentPage,
     totalPages,
-    totalItems: filteredIncidents.length, // Note: This should ideally come from API response
+    totalItems,
     itemsPerPage,
     onPageChange: handlePageChange,
     onItemsPerPageChange: handleItemsPerPageChange,
