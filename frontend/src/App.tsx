@@ -123,17 +123,17 @@ function AppContent() {
 
       <BdsGrid
         direction="column"
-        gap="4"
-        padding="4"
+        gap="2"
+        padding="2"
         xxs="12"
-        lg="10"
+        lg="12"
       >
         {/* <Dashboard /> */}
 
         <IncidentFilters
           filters={filters}
           onFiltersChange={setFilters}
-          totalItems={incidents.length}
+          totalItems={totalItems}
         />
 
         {/* Manual Refresh Button */}
