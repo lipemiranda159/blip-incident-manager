@@ -2,4 +2,11 @@
 
 namespace Blip.IncidentManager.Application.Auth.Commands.Insert;
 
-public record InsertUserCommand(string Name, string Email, string Type, string Avatar, string Password) : IRequest<UserDto>;
+public class InsertUserCommand() : IRequest<UserDto>
+{
+    public string Name { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty;
+    public string Avatar { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+}
