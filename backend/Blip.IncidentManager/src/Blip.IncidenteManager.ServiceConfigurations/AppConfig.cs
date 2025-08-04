@@ -6,7 +6,7 @@ namespace Blip.IncidentManager.ServiceConfigurations
     {
         public Database Database { get; set; } = new Database();
         public Jwt Jwt { get; set; } = new Jwt();
-        public Gemini Gemini { get; set; } = new Gemini();
+        public AiConfig AiConfig { get; set; } = new AiConfig();
         public Cors Cors { get; set; } = new Cors();
     }
 }
