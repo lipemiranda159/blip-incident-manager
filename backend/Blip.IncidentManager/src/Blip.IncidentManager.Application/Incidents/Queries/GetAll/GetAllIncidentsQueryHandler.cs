@@ -47,6 +47,7 @@ namespace Blip.IncidentManager.Application.Incidents.Queries.GetAll
                 CurrentPage = request.PageNumber,
                 Items = incidents,
                 TotalPages = (int)Math.Ceiling((double)count / request.PageSize),
+                TotalCount = count
             };
         }
     }
