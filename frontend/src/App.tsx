@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { BdsGrid, BdsButton, BdsIcon } from 'blip-ds/dist/blip-ds-react/components';
 import Header from './components/Headers';
-import Dashboard from './components/Dashboard';
 import { IncidentFilters } from './components/IncidentFilters';
-import { IncidentGrid } from './components/IncidentGrid';
 import { IncidentTable } from './components/IncidentTable';
 import { Pagination } from './components/Pagination';
 import { CreateIncidentModal } from './components/CreateIncidentModal';
