@@ -49,12 +49,12 @@ function AppContent() {
   });
 
   const handleLoginSuccess = () => {
-    setShowRegister(false); // Reset to login view after successful login
+    setShowRegister(false);
   };
 
   const handleRegisterSuccess = () => {
-    setShowRegister(false); // Reset to login view after successful registration
-  };
+    setShowRegister(false);
+  };  
 
   const handleGoToRegister = () => {
     setShowRegister(true);
