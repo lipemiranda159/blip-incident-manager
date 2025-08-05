@@ -12,6 +12,7 @@ interface AuthState {
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<boolean>;
+  register: (name: string, email: string, password: string, userType: 'solicitante' | 'atendente') => Promise<boolean>;
   logout: () => void;
   clearError: () => void;
 }
@@ -21,6 +22,9 @@ type AuthAction =
   | { type: 'LOGIN_START' }
   | { type: 'LOGIN_SUCCESS'; payload: User }
   | { type: 'LOGIN_FAILURE'; payload: string }
+  | { type: 'REGISTER_START' }
+  | { type: 'REGISTER_SUCCESS'; payload: User }
+  | { type: 'REGISTER_FAILURE'; payload: string }
   | { type: 'LOGOUT' }
   | { type: 'RESTORE_SESSION'; payload: User }
   | { type: 'CLEAR_ERROR' };
@@ -62,6 +66,28 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
         error: null,
       };
     case 'LOGIN_FAILURE':
+      return {
+        ...state,
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: action.payload,
+      };
+    case 'REGISTER_START':
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
+    case 'REGISTER_SUCCESS':
+      return {
+        ...state,
+        user: null, // Não fazer login automático após registro
+        isAuthenticated: false,
+        isLoading: false,
+        error: null,
+      };
+    case 'REGISTER_FAILURE':
       return {
         ...state,
         user: null,
@@ -156,24 +182,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await apiClient.auth.login({ email, password });
       
       if (response.status === 200 && response.data) {
-        // Extract token from response (should be in response.data.token based on new Swagger)
         const token = response.data.token || response.data.accessToken;
         
         if (!token) {
-          console.warn('No token received from login response:', response.data);
           dispatch({ type: 'LOGIN_FAILURE', payload: 'Token de autenticação não recebido' });
           return false;
         }
-
-        // Map API response to User type
         const jwtData = parseJwt(token);
         const user = mapApiUserToUser(jwtData);
         
-        // Store user data and token in localStorage for session persistence
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('authToken', token);
         
-        // Set token in API client for subsequent requests
         apiClient.setAuthToken(token);
         
         dispatch({ type: 'LOGIN_SUCCESS', payload: user });
@@ -185,6 +205,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro interno do servidor';
       dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage });
+      return false;
+    }
+  };
+
+  // Register function
+  const register = async (name: string, email: string, password: string, userType: 'solicitante' | 'atendente'): Promise<boolean> => {
+    dispatch({ type: 'REGISTER_START' });
+
+    try {
+      const response = await apiClient.auth.register({ 
+        name, 
+        email, 
+        password, 
+        type: userType,
+        avatar: null // Avatar is optional for registration
+      });
+      
+      if (response.status === 201 && response.data) {
+        // Registro bem-sucedido - garantir que usuário não seja autenticado
+        console.log('Registration successful, ensuring user is not authenticated');
+        
+        // Limpar qualquer token ou dados de usuário residuais
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        apiClient.clearAuthToken();
+        
+        // Garantir estado não autenticado
+        dispatch({ type: 'LOGOUT' });
+        
+        return true;
+      } else {
+        dispatch({ type: 'REGISTER_FAILURE', payload: 'Erro ao criar conta' });
+        return false;
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro interno do servidor';
+      dispatch({ type: 'REGISTER_FAILURE', payload: errorMessage });
       return false;
     }
   };
@@ -207,6 +264,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     ...state,
     login,
+    register,
     logout,
     clearError,
   };

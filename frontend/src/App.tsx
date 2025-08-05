@@ -10,6 +10,7 @@ import { useIncidentModal } from './hooks/useIncidentModal';
 import './styles/modal-scroll-lock.css';
 import { useIncidentOperations } from './hooks/useIncidentOperations';
 import { LoginForm } from './components/LoginForm';
+import { RegisterForm } from './components/RegisterForm';
 import type { Incident } from './types';
 import { IncidentModal } from './components/IncidentModal';
 import { AuthProvider, useAuthContext } from './contexts/AuthContext';
@@ -17,6 +18,7 @@ import { AuthProvider, useAuthContext } from './contexts/AuthContext';
 // Component that uses the auth context
 function AppContent() {
   const { user, isAuthenticated, logout } = useAuthContext();
+  const [showRegister, setShowRegister] = useState(false);
   const {
     incidents,
     loading,
@@ -50,6 +52,21 @@ function AppContent() {
     // The AuthContext will handle the login state update
     // This callback is called when login is successful
     console.log('Login successful:', userData);
+    setShowRegister(false); // Reset to login view after successful login
+  };
+
+  const handleRegisterSuccess = (userData: any) => {
+    // The AuthContext will handle the registration state update
+    // This callback is called when registration is successful
+    setShowRegister(false); // Reset to login view after successful registration
+  };
+
+  const handleGoToRegister = () => {
+    setShowRegister(true);
+  };
+
+  const handleBackToLogin = () => {
+    setShowRegister(false);
   };
 
   const handleIncidentClick = async (incident: Incident) => {
@@ -73,8 +90,6 @@ function AppContent() {
     if (!status) return { success: false, error: 'Status inválido' };
     try {
       const result = await incidentOperations.handleUpdateIncident(incidentId, { status: status as Incident['status'] });
-      // Note: Removed automatic refresh to prevent DOM errors
-      // User can manually refresh if needed
       return result;
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
@@ -86,8 +101,6 @@ function AppContent() {
     try {
       const updateData: Partial<Incident> = assignedToId ? { assignedTo: user! } : { assignedTo: undefined };
       const result = await incidentOperations.handleUpdateIncident(incidentId, updateData);
-      // Note: Removed automatic refresh to prevent DOM errors
-      // User can manually refresh if needed
       return result;
     } catch (error) {
       console.error('Erro ao atualizar atribuição:', error);
@@ -98,8 +111,6 @@ function AppContent() {
   const handleAddComment = async (incidentId: string, content: string, author: any) => {
     try {
       const result = await incidentOperations.handleAddComment(incidentId, content, author);
-      // Note: Removed automatic refresh to prevent DOM errors
-      // User can manually refresh if needed
       return result;
     } catch (error) {
       console.error('Erro ao adicionar comentário:', error);
@@ -108,7 +119,20 @@ function AppContent() {
   };
 
   if (!isAuthenticated || !user) {
-    return <LoginForm onLoginSuccess={handleLoginSuccess} />;
+    if (showRegister) {
+      return (
+        <RegisterForm 
+          onRegisterSuccess={handleRegisterSuccess}
+          onBackToLogin={handleBackToLogin}
+        />
+      );
+    }
+    return (
+      <LoginForm 
+        onLoginSuccess={handleLoginSuccess}
+        onGoToRegister={handleGoToRegister}
+      />
+    );
   }
 
   return (

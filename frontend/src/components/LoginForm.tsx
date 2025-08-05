@@ -11,9 +11,10 @@ import { useAuthContext } from '../contexts/AuthContext';
 
 interface LoginFormProps {
   onLoginSuccess?: (userData: any) => void;
+  onGoToRegister?: () => void;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onGoToRegister }) => {
   const { login, error: authError, isLoading } = useAuthContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -150,6 +151,21 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
           >
             {isLoading ? 'Entrando...' : 'Entrar'}
           </BdsButton>
+
+          <BdsGrid direction="column" justify-content="center" align-items="center" gap="1">
+            <BdsTypo variant="fs-14" color="content-secondary">
+              Não tem uma conta?
+            </BdsTypo>
+            <BdsButton
+              variant="ghost"
+              size="short"
+              onBdsClick={onGoToRegister}
+              disabled={isLoading}
+              style={{ minWidth: 'auto', padding: '0' }}
+            >
+                Criar conta
+            </BdsButton>
+          </BdsGrid>
         </BdsGrid>
       </BdsGrid>
     </BdsGrid>
