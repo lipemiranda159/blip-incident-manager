@@ -8,7 +8,8 @@ import {
   BdsSelectOption,
   BdsButton,
   BdsTypo,
-  BdsChipTag
+  BdsChipClickable,
+  BdsDatepicker
 } from 'blip-ds/dist/blip-ds-react/components';
 
 interface IncidentFiltersProps {
@@ -66,18 +67,42 @@ export const IncidentFilters: React.FC<IncidentFiltersProps> = ({
           </BdsSelect>
 
           <BdsGrid direction="row" gap="1">
-            <BdsInput
-              type="date"
-              value={filters.dateFrom || ''}
-              onBdsChange={(e: CustomEvent) => updateFilter('dateFrom', e.detail.value || '')}
-              placeholder="Data inicial"
-            />
-            <BdsInput
-              type="date"
-              value={filters.dateTo || ''}
-              onBdsChange={(e: CustomEvent) => updateFilter('dateTo', e.detail.value || '')}
-              placeholder="Data final"
-            />
+            <BdsDatepicker 
+              type-of-date="period" 
+              onBdsStartDate={(e: CustomEvent) => {
+                const dateValue = e.detail.value;
+                
+                // Converter Date para string no formato DD/MM/YYYY se necessário
+                let dateString = '';
+                if (dateValue instanceof Date) {
+                  const day = dateValue.getDate().toString().padStart(2, '0');
+                  const month = (dateValue.getMonth() + 1).toString().padStart(2, '0');
+                  const year = dateValue.getFullYear();
+                  dateString = `${day}/${month}/${year}`;
+                } else if (typeof dateValue === 'string') {
+                  dateString = dateValue;
+                }
+                
+                updateFilter('dateFrom', dateString);
+              }} 
+              onBdsEndDate={(e: CustomEvent) => {
+                const dateValue = e.detail.value;
+                
+                // Converter Date para string no formato DD/MM/YYYY se necessário
+                let dateString = '';
+                if (dateValue instanceof Date) {
+                  const day = dateValue.getDate().toString().padStart(2, '0');
+                  const month = (dateValue.getMonth() + 1).toString().padStart(2, '0');
+                  const year = dateValue.getFullYear();
+                  dateString = `${day}/${month}/${year}`;
+                } else if (typeof dateValue === 'string') {
+                  dateString = dateValue;
+                }
+                
+                updateFilter('dateTo', dateString);
+              }} 
+              start-date-limit="31/12/2022" 
+              end-date-limit="01/01/2027" />
           </BdsGrid>
 
           {hasActiveFilters && (
@@ -104,28 +129,24 @@ export const IncidentFilters: React.FC<IncidentFiltersProps> = ({
         {hasActiveFilters && (
           <BdsGrid direction="row" gap="1" flex-wrap="wrap">
             {filters.status && (
-              <BdsChipTag color="info">
+              <BdsChipClickable icon='close' onClick={() => updateFilter('status', '')} color="info" clickable={true}>
                 Status: {filters.status}
-                <BdsButton 
-                  variant="ghost" 
-                  size="short" 
-                  icon="close" 
-                  onBdsClick={() => updateFilter('status', '')}
-                  style={{ marginLeft: '4px', minWidth: 'auto', padding: '2px' }}
-                />
-              </BdsChipTag>
+              </BdsChipClickable>
             )}
             {filters.priority && (
-              <BdsChipTag color="success">
+              <BdsChipClickable icon='close' onClick={() => updateFilter('priority', '')} color="success" clickable={true}>
                 Prioridade: {filters.priority}
-                <BdsButton 
-                  variant="ghost" 
-                  size="short" 
-                  icon="close" 
-                  onBdsClick={() => updateFilter('priority', '')}
-                  style={{ marginLeft: '4px', minWidth: 'auto', padding: '2px' }}
-                />
-              </BdsChipTag>
+              </BdsChipClickable>
+            )}
+            {filters.dateFrom && (
+              <BdsChipClickable icon='close' onClick={() => updateFilter('dateFrom', '')} color="warning" clickable={true}>
+                Data inicial: {filters.dateFrom}
+              </BdsChipClickable>
+            )}
+            {filters.dateTo && (
+              <BdsChipClickable icon='close' onClick={() => updateFilter('dateTo', '')} color="warning" clickable={true}>
+                Data final: {filters.dateTo}
+              </BdsChipClickable>
             )}
           </BdsGrid>
         )}
