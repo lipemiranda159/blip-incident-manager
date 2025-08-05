@@ -13,6 +13,7 @@ import {
     BdsGrid
 } from 'blip-ds/dist/blip-ds-react/components';
 import type { Incident } from '../types';
+import { useWindowWidth } from '../hooks/useWindowWidth';
 
 interface IncidentTableProps {
     incidents: Incident[];
@@ -64,7 +65,7 @@ const getPriorityColor = (priority: string): "warning" | "info" | "success" | "o
 const formatDate = (date: string | Date): string => {
     try {
         let dateObj: Date;
-        
+
         if (typeof date === 'string') {
             // Garantir que a string termine com 'Z' para UTC
             const utcDate = date.endsWith('Z') ? date : date + 'Z';
@@ -72,12 +73,12 @@ const formatDate = (date: string | Date): string => {
         } else {
             dateObj = date;
         }
-        
+
         // Verificar se a data é válida
         if (isNaN(dateObj.getTime())) {
             return '—';
         }
-        
+
         return dateObj.toLocaleString('pt-BR', {
             day: '2-digit',
             month: '2-digit',
@@ -97,6 +98,12 @@ export const IncidentTable = ({
     loading = false,
     onIncidentClick
 }: IncidentTableProps) => {
+    // Hook deve ser chamado no topo do componente (regras dos hooks)
+    const windowWidth = useWindowWidth();
+    // Definir breakpoints para diferentes tamanhos de tela
+    const isSmall = windowWidth < 768;       // Exibe somente componentes essenciais
+    const isMedium = windowWidth < 992;      // Ocultar: Descrição
+    
     // Sempre trate incidents como array
     const safeIncidents = Array.isArray(incidents) ? incidents : [];
 
@@ -142,6 +149,8 @@ export const IncidentTable = ({
         );
     }
 
+
+
     if ((!safeIncidents || safeIncidents.length === 0) && !loading) {
         return (
             <BdsGrid direction="column" gap="3" padding="4">
@@ -162,11 +171,14 @@ export const IncidentTable = ({
                     <BdsTableRow>
                         <BdsTableTh>ID</BdsTableTh>
                         <BdsTableTh>Título</BdsTableTh>
-                        <BdsTableTh>Descrição</BdsTableTh>
-                        <BdsTableTh>Status</BdsTableTh>
-                        <BdsTableTh>Prioridade</BdsTableTh>
-                        <BdsTableTh>Criado por</BdsTableTh>
-                        <BdsTableTh>Atribuído a</BdsTableTh>
+                        {/* Ocultar Descrição em telas médias e menores */}
+                        {!isMedium && <BdsTableTh>Descrição</BdsTableTh>}
+                        {!isSmall &&<BdsTableTh>Status</BdsTableTh>}
+                        {!isSmall &&<BdsTableTh>Prioridade</BdsTableTh>}
+                        {/* Ocultar Criado por em telas pequenas e menores */}
+                        {!isSmall && <BdsTableTh>Criado por</BdsTableTh>}
+                        {/* Ocultar Atribuído a em telas extra pequenas */}
+                        {!isSmall && <BdsTableTh>Atribuído a</BdsTableTh>}
                         <BdsTableTh>Data</BdsTableTh>
                         <BdsTableTh>Ações</BdsTableTh>
                     </BdsTableRow>
@@ -186,31 +198,40 @@ export const IncidentTable = ({
                                             {truncateText(incident.title || '', 30)}
                                         </BdsTypo>
                                     </BdsTableCell>
-                                    <BdsTableCell>
-                                        <BdsTypo variant="fs-12" color="content-secondary" title={incident.description || ''}>
-                                            {truncateText(incident.description || '', 40)}
-                                        </BdsTypo>
-                                    </BdsTableCell>
-                                    <BdsTableCell>
+                                    {/* Ocultar Descrição em telas médias e menores */}
+                                    {!isMedium && (
+                                        <BdsTableCell>
+                                            <BdsTypo variant="fs-12" color="content-secondary" title={incident.description || ''}>
+                                                {truncateText(incident.description || '', 40)}
+                                            </BdsTypo>
+                                        </BdsTableCell>
+                                    )}
+                                    {!isSmall && <BdsTableCell>
                                         <BdsChipTag color={getStatusColor(incident.status)}>
                                             {incident.status}
                                         </BdsChipTag>
-                                    </BdsTableCell>
-                                    <BdsTableCell>
+                                    </BdsTableCell>}
+                                    {!isSmall && <BdsTableCell>
                                         <BdsChipTag color={getPriorityColor(incident.priority)}>
                                             {incident.priority}
                                         </BdsChipTag>
-                                    </BdsTableCell>
-                                    <BdsTableCell>
-                                        <BdsTypo variant="fs-12">
-                                            {incident.createdBy?.name || '—'}
-                                        </BdsTypo>
-                                    </BdsTableCell>
-                                    <BdsTableCell>
-                                        <BdsTypo variant="fs-12" color={incident.assignedTo ? 'primary' : 'content-tertiary'}>
-                                            {incident.assignedTo?.name || 'Não atribuído'}
-                                        </BdsTypo>
-                                    </BdsTableCell>
+                                    </BdsTableCell>}
+                                    {/* Ocultar Criado por em telas pequenas e menores */}
+                                    {!isSmall && (
+                                        <BdsTableCell>
+                                            <BdsTypo variant="fs-12">
+                                                {incident.createdBy?.name || '—'}
+                                            </BdsTypo>
+                                        </BdsTableCell>
+                                    )}
+                                    {/* Ocultar Atribuído a em telas extra pequenas */}
+                                    {!isSmall && (
+                                        <BdsTableCell>
+                                            <BdsTypo variant="fs-12" color={incident.assignedTo ? 'primary' : 'content-tertiary'}>
+                                                {incident.assignedTo?.name || 'Não atribuído'}
+                                            </BdsTypo>
+                                        </BdsTableCell>
+                                    )}
                                     <BdsTableCell>
                                         <BdsTypo variant="fs-12">
                                             {incident.createdAt ? formatDate(incident.createdAt) : '—'}
