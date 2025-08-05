@@ -48,16 +48,11 @@ function AppContent() {
     getIncidentById
   });
 
-  const handleLoginSuccess = (userData: any) => {
-    // The AuthContext will handle the login state update
-    // This callback is called when login is successful
-    console.log('Login successful:', userData);
+  const handleLoginSuccess = () => {
     setShowRegister(false); // Reset to login view after successful login
   };
 
-  const handleRegisterSuccess = (userData: any) => {
-    // The AuthContext will handle the registration state update
-    // This callback is called when registration is successful
+  const handleRegisterSuccess = () => {
     setShowRegister(false); // Reset to login view after successful registration
   };
 

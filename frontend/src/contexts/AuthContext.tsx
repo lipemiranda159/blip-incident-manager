@@ -224,7 +224,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       if (response.status === 201 && response.data) {
         // Registro bem-sucedido - garantir que usuário não seja autenticado
-        console.log('Registration successful, ensuring user is not authenticated');
         
         // Limpar qualquer token ou dados de usuário residuais
         localStorage.removeItem('authToken');

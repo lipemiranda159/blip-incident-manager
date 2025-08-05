@@ -12,7 +12,7 @@ import React, { useState } from 'react';
 import { useAuthContext } from '../contexts/AuthContext';
 
 interface RegisterFormProps {
-  onRegisterSuccess?: (userData: any) => void;
+  onRegisterSuccess?: () => void;
   onBackToLogin?: () => void;
 }
 
@@ -68,7 +68,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         
         // Redirect to login after showing success message
         setTimeout(() => {
-          onRegisterSuccess?.({ name, email, userType });
+          onRegisterSuccess?.();
         }, 2000);
       }
     } catch (error) {
