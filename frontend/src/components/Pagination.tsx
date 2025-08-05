@@ -44,10 +44,10 @@ export const Pagination = ({
         {totalItems} {totalItems === 1 ? 'incidente' : 'incidentes'}
       </BdsTypo>
 
-      {totalPages > 1 && (
+      {totalPages > 1 && totalPages > 0 && currentPage > 0 && (
         <BdsPagination
-          pages={totalPages}
-          current-page={currentPage}
+          pages={Math.max(1, totalPages)}
+          current-page={Math.max(1, currentPage)}
           startedPage={1}
           pageCounter={true}
           onBdsPaginationChange={handleBdsPaginationChange}
